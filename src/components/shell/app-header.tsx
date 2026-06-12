@@ -76,7 +76,7 @@ export function AppHeader() {
       <div className="flex items-center gap-3">
         <a href="/" className="flex items-center gap-2 text-sm font-semibold">
           <RiShieldCheckLine className="size-5 text-primary" />
-          <span className="hidden sm:inline">SecureAnalyzer</span>
+          <span className="hidden sm:inline">data-analyzer</span>
         </a>
         <Separator orientation="vertical" className="h-4 data-[orientation=vertical]:self-center" />
         <AppBreadcrumbs page={page} />

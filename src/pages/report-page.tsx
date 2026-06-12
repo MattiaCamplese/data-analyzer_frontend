@@ -33,7 +33,7 @@ export default function ReportPage() {
   const printRef = useRef<HTMLDivElement>(null);
   const handlePrint = useReactToPrint({
     contentRef: printRef,
-    documentTitle: report ? `SecureAnalyzer - ${report.domain_name}` : "SecureAnalyzer Report",
+    documentTitle: report ? `data-analyzer - ${report.domain_name}` : "data-analyzer Report",
     pageStyle: `
       @page { margin: 20mm; }
       @media print {
