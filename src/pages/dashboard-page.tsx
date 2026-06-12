@@ -1,6 +1,6 @@
 import { useState, useRef, useEffect } from "react";
 import { useNavigate } from "react-router-dom";
-import { Search, Globe, TrendingUp, AlertTriangle, ShieldCheck, Trash2, SlidersHorizontal, ArrowUp, ArrowDown, ChevronsUpDown } from "lucide-react";
+import { Search, Globe, TrendingUp, AlertTriangle, ShieldCheck, Trash2, SlidersHorizontal, ArrowUp, ArrowDown, ChevronsUpDown, GitCompare } from "lucide-react";
 import { toast } from "sonner";
 import { useReports, useDeleteReport } from "@/hooks/use-reports";
 import { getRiskInfo, formatDate } from "@/lib/risk-utils";
@@ -11,6 +11,7 @@ import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from "@/components/ui/table";
 import { Pagination, PaginationContent, PaginationEllipsis, PaginationItem, PaginationLink, PaginationNext, PaginationPrevious } from "@/components/ui/pagination";
+import { RiskTrendChart } from "@/components/dashboard/risk-trend-chart";
 
 const RISK_LEVELS = [
   { key: "critical", label: "Critico",  test: (s: number) => s > 80 },
@@ -157,6 +158,9 @@ export default function DashboardPage() {
           </CardContent>
         </Card>
       </div>
+
+      {/* Risk trend chart */}
+      {reports.length > 0 && <RiskTrendChart reports={reports} />}
 
       {/* Tabella domini */}
       <Card className="shadow-none dark:ring-0 gap-0">
@@ -330,22 +334,33 @@ export default function DashboardPage() {
                         {formatDate(report.creation_date)}
                       </TableCell>
                       <TableCell className="pr-6 text-right" onClick={(e) => e.stopPropagation()}>
-                        <Button
-                          size="icon-sm"
-                          variant="outline"
-                          className="text-muted-foreground hover:text-destructive hover:border-destructive/50"
-                          disabled={isDeleting}
-                          onClick={() => {
-                            if (confirm(`Eliminare l'analisi di ${report.domain_name}?`)) {
-                              deleteReport(report.idsummary, {
-                                onSuccess: () => toast.success(`${report.domain_name} eliminato`),
-                                onError: (err: Error) => toast.error(`Errore: ${err.message}`),
-                              });
-                            }
-                          }}
-                        >
-                          <Trash2 className="size-3.5" />
-                        </Button>
+                        <div className="flex items-center justify-end gap-1">
+                          <Button
+                            size="icon-sm"
+                            variant="outline"
+                            title="Confronta scansioni"
+                            className="text-muted-foreground hover:text-primary hover:border-primary/50"
+                            onClick={() => navigate(`/compare/${encodeURIComponent(report.domain_name)}`)}
+                          >
+                            <GitCompare className="size-3.5" />
+                          </Button>
+                          <Button
+                            size="icon-sm"
+                            variant="outline"
+                            className="text-muted-foreground hover:text-destructive hover:border-destructive/50"
+                            disabled={isDeleting}
+                            onClick={() => {
+                              if (confirm(`Eliminare l'analisi di ${report.domain_name}?`)) {
+                                deleteReport(report.idsummary, {
+                                  onSuccess: () => toast.success(`${report.domain_name} eliminato`),
+                                  onError: (err: Error) => toast.error(`Errore: ${err.message}`),
+                                });
+                              }
+                            }}
+                          >
+                            <Trash2 className="size-3.5" />
+                          </Button>
+                        </div>
                       </TableCell>
                     </TableRow>
                   );

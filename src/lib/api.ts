@@ -15,22 +15,46 @@ export async function fetchReports(params?: {
   search?: string
   page?: number
   perPage?: number
+  latest?: boolean
 }): Promise<{ items: SecurityReport[]; totalItems: number; totalPages: number }> {
   if (isMock) {
-    const items = params?.search
-      ? mockReports.filter((r) =>
-          r.domain_name.toLowerCase().includes(params.search!.toLowerCase()),
-        )
-      : mockReports
+    // Deduplicate by domain_name, keep latest creation_date (mock behaviour)
+    const byDomain = new Map<string, SecurityReport>()
+    for (const r of mockReports) {
+      const existing = byDomain.get(r.domain_name)
+      if (!existing || r.creation_date > existing.creation_date) byDomain.set(r.domain_name, r)
+    }
+    let items = Array.from(byDomain.values())
+    if (params?.search) {
+      items = items.filter((r) =>
+        r.domain_name.toLowerCase().includes(params.search!.toLowerCase()),
+      )
+    }
     return { items, totalItems: items.length, totalPages: 1 }
   }
 
   const url = new URL(`${BASE_URL}/api/summaries`)
+  url.searchParams.set("latest", String(params?.latest ?? true))
   if (params?.search)   url.searchParams.set("search",  params.search)
   if (params?.page)     url.searchParams.set("page",    String(params.page))
   if (params?.perPage)  url.searchParams.set("perPage", String(params.perPage))
 
   const res = await fetch(url.toString(), { headers: authHeader() })
+  if (!res.ok) throw new Error(`HTTP ${res.status}`)
+  return res.json()
+}
+
+// ── Storico scansioni per dominio ──────────────────────────
+export async function fetchReportHistory(domain: string): Promise<{ items: SecurityReport[]; total: number }> {
+  if (isMock) {
+    const items = mockReports.filter((r) => r.domain_name === domain)
+      .sort((a, b) => b.creation_date.localeCompare(a.creation_date))
+    return { items, total: items.length }
+  }
+  const res = await fetch(
+    `${BASE_URL}/api/summaries/history/${encodeURIComponent(domain)}`,
+    { headers: authHeader() },
+  )
   if (!res.ok) throw new Error(`HTTP ${res.status}`)
   return res.json()
 }

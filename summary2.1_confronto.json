@@ -1,0 +1,108 @@
+{
+  "status": "success",
+  "results": [
+    {
+      "idsummary": "a7b4c8d2-f031-4e5a-92d7-1e3f9c084b25",
+      "summary_text": "**Riepilogo Esecutivo della Vulnerabilità per \"cybersonar.demo\"**\n\nIl dominio \"cybersonar.demo\" mostra un miglioramento rispetto alla scansione precedente, con un punteggio di rischio sceso a 81 su 100 (da 99). Le due vulnerabilità critiche attive sono state risolte. Rimangono tuttavia criticità significative: i certificati scaduti sono stati parzialmente rinnovati ma permangono 9 scaduti, e la fuga di dati si è ridotta ma resta sostanziale.\n\n**Vulnerabilità:**\n- Totale vulnerabilità rilevate: 118. Le 2 critiche attive sono state corrette. Emergono però 3 nuove vulnerabilità alte attive precedentemente non rilevate. Le passive di alto livello si riducono da 18 a 11.\n\n**Esposizione dei Servizi:**\n- Gli asset scendono da 102 a 87. Le porte esposte si riducono: porta 80 da 68 a 45 istanze. Aggiunto WAF su 3 asset aggiuntivi (da 4 a 7).\n\n**Fuga di Dati:**\n- I potential_stealer si dimezzano (da 826 a 412). Il domain_stealer non risolto rimane 1. Gli other_stealer scendono da 11 a 4.\n\n**Certificati:**\n- I certificati scaduti scendono da 18 a 9. Quelli attivi aumentano da 15 a 21.\n\n**Sicurezza Email:**\n- Nessun cambiamento: lo spoofing è ancora possibile nonostante la policy DMARC in quarantina.",
+      "summary_text_en": "**Executive Summary of Vulnerability for \"cybersonar.demo\"**\n\nThe domain \"cybersonar.demo\" shows improvement compared to the previous scan, with a risk score down to 81 out of 100 (from 99). The two active critical vulnerabilities have been resolved. However, significant issues remain: expired certificates have been partially renewed but 9 remain expired, and data leakage has decreased but remains substantial.\n\n**Vulnerabilities:**\n- Total vulnerabilities detected: 118. The 2 active criticals have been fixed. However, 3 new active high vulnerabilities have emerged. High-level passives reduced from 18 to 11.\n\n**Service Exposure:**\n- Assets reduced from 102 to 87. Exposed ports reduced: port 80 from 68 to 45 instances. WAF added on 3 additional assets (from 4 to 7).\n\n**Data Leakage:**\n- Potential_stealers halved (from 826 to 412). Unresolved domain_stealer remains 1. Other_stealers reduced from 11 to 4.\n\n**Certificates:**\n- Expired certificates down from 18 to 9. Active certificates increased from 15 to 21.\n\n**Email Security:**\n- No change: spoofing is still possible despite DMARC policy in quarantine.",
+      "risk_score": "81",
+      "creation_date": "2024-04-15 10:22:33",
+      "last_edit": "2024-04-15 11:30:00",
+      "domain_name": "cybersonar.demo",
+      "servizi_esposti_score": 74,
+      "dataleak_score": 78,
+      "rapporto_leak_email_score": 50,
+      "spoofing_score": 50,
+      "open_ports_score": 1,
+      "blacklist_score": 70,
+      "vulnerability_score_active": 38,
+      "vulnerability_score_passive": 72,
+      "certificate_score": 35,
+      "n_port": {
+        "53": { "n": 2 },
+        "80": { "n": 45 },
+        "443": { "n": 38 },
+        "6667": { "n": 4 },
+        "6697": { "n": 4 },
+        "8080": { "n": 3 },
+        "8800": { "n": 12 }
+      },
+      "n_cert_attivi": 21,
+      "n_cert_scaduti": 9,
+      "n_asset": 87,
+      "n_similar_domains": 13,
+      "email_security": {
+        "spoofable": "Spoofing possible.",
+        "dmarc_policy": "quarantine",
+        "blacklist_detections": 0,
+        "blacklist_total_list": 60,
+        "blacklist_detected_list": []
+      },
+      "n_dataleak": {
+        "total": {
+          "vip": 0,
+          "domain_stealer": 1,
+          "potential_stealer": 412,
+          "other_stealer": 4,
+          "general_leak": 0
+        },
+        "resolved": {
+          "vip": 0,
+          "domain_stealer": 0,
+          "potential_stealer": 414,
+          "other_stealer": 7,
+          "general_leak": 0
+        },
+        "unresolved": {
+          "vip": 0,
+          "domain_stealer": 1,
+          "potential_stealer": 412,
+          "other_stealer": 4,
+          "general_leak": 0
+        },
+        "enumeration": 1
+      },
+      "n_vulns": {
+        "total": {
+          "critical": 0,
+          "high": 14,
+          "medium": 34,
+          "low": 0,
+          "info": 70
+        },
+        "active": {
+          "critical": 0,
+          "high": 3,
+          "medium": 2,
+          "low": 0,
+          "info": 70
+        },
+        "passive": {
+          "critical": 0,
+          "high": 11,
+          "medium": 32,
+          "low": 0,
+          "info": 0
+        }
+      },
+      "waf": {
+        "count": 7,
+        "assets": [
+          "128f92aa-85c1-486f-acbf-c1b43e8b33ba",
+          "ec87e3bd-3de2-477c-b52b-b93a70814ed0",
+          "b909c3b2-56e6-40e5-98c1-814fa0b85bb7",
+          "175e40e8-33af-4db3-9617-a3be04103d6f",
+          "3a1d5f88-72bc-4e9a-b341-c9d02f187a63",
+          "9e4c1b77-3d8f-4a2e-b056-8f1e3c294d85",
+          "f2a87b34-5c9d-4f1a-8e23-7d4b9e162c47"
+        ]
+      },
+      "cdn": {
+        "count": 0,
+        "assets": []
+      },
+      "unique_ipv4": 24,
+      "unique_ipv6": 18
+    }
+  ]
+}

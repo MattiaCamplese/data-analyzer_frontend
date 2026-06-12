@@ -9,6 +9,7 @@ import { TooltipProvider } from "@/components/ui/tooltip"
 import AppLayout from "./layout/app-layout"
 import DashboardPage from "./pages/dashboard-page"
 import ReportPage from "./pages/report-page"
+import ComparePage from "./pages/compare-page"
 import LoginPage from "./pages/login-page"
 import ProtectedRoute from "./components/shell/protected-route"
 
@@ -40,6 +41,10 @@ const router = createBrowserRouter([
           {
             path: "/report/:id",
             element: <ReportPage />,
+          },
+          {
+            path: "/compare/:domain",
+            element: <ComparePage />,
           },
         ],
       },

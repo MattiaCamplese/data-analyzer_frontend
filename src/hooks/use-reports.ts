@@ -1,5 +1,5 @@
 import { useQuery, useMutation, useQueryClient } from "@tanstack/react-query"
-import { fetchReport, fetchReports, deleteReport } from "@/lib/api"
+import { fetchReport, fetchReports, fetchReportHistory, deleteReport } from "@/lib/api"
 import type { SecurityReport } from "@/types/report"
 
 export function useReports(search?: string) {
@@ -10,15 +10,27 @@ export function useReports(search?: string) {
   })
 }
 
-export function useReport(domain: string) {
+export function useReport(domain: string, scanId?: string) {
   const queryClient = useQueryClient()
   return useQuery({
-    queryKey: ["report", domain],
+    queryKey: ["report", domain, scanId ?? "latest"],
     queryFn: async () => {
+      // Specific historical scan: fetch directly by UUID
+      if (scanId) return fetchReport(scanId)
+      // Latest scan: resolve UUID from cache or fallback to domain name
       const list = queryClient.getQueryData<{ items: SecurityReport[] }>(["reports", ""])
       const match = list?.items.find((r) => r.domain_name === domain)
       return fetchReport(match?.idsummary ?? domain)
     },
+    enabled: !!domain,
+    staleTime: 30_000,
+  })
+}
+
+export function useReportHistory(domain: string) {
+  return useQuery({
+    queryKey: ["report-history", domain],
+    queryFn: () => fetchReportHistory(domain),
     enabled: !!domain,
     staleTime: 30_000,
   })
