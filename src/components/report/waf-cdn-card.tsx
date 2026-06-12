@@ -29,13 +29,13 @@ function Service({ label, count, assets, icon: Icon, notDetectedLabel, assetLabe
         )}
       </div>
       {active && assets.length > 0 && (
-        <div className="flex flex-wrap gap-1">
-          {assets.slice(0, 4).map((a) => (
-            <span key={a} className="rounded-md bg-muted px-1.5 py-0.5 font-mono text-xs text-muted-foreground truncate max-w-30">{a}</span>
+        <div className="max-h-32 overflow-y-auto rounded-md border bg-muted/40">
+          {assets.map((a, i) => (
+            <div key={a} className="flex items-center gap-2 border-b last:border-0 px-2 py-1">
+              <span className="shrink-0 tabular-nums text-[10px] text-muted-foreground w-5 text-right">{i + 1}</span>
+              <span className="font-mono text-[11px] text-muted-foreground break-all">{a}</span>
+            </div>
           ))}
-          {assets.length > 4 && (
-            <span className="rounded-md bg-muted px-1.5 py-0.5 text-xs text-muted-foreground">+{assets.length - 4}</span>
-          )}
         </div>
       )}
     </div>
