@@ -7,6 +7,8 @@ import { useAuthStore } from "@/features/auth/auth.store";
 import { useNotificationsStore } from "@/features/notifications/notifications.store";
 import { useTheme } from "@/components/theme-provider";
 import { AppBreadcrumbs } from "@/components/shell/app-breadcrumbs";
+import { useLangStore } from "@/features/lang/lang.store";
+import { useT } from "@/hooks/use-t";
 
 function useBreadcrumb() {
   const { pathname } = useLocation();
@@ -17,21 +19,23 @@ function useBreadcrumb() {
   return { title: "Dashboard", icon: <RiDashboardLine /> };
 }
 
-function timeAgo(iso: string): string {
+function timeAgo(iso: string, t: { timeNow: string; timeMin: string; timeHour: string; timeDay: string }): string {
   const diff = Math.floor((Date.now() - new Date(iso).getTime()) / 1000);
-  if (diff < 60) return "adesso";
-  if (diff < 3600) return `${Math.floor(diff / 60)} min fa`;
-  if (diff < 86400) return `${Math.floor(diff / 3600)} ore fa`;
-  return `${Math.floor(diff / 86400)} giorni fa`;
+  if (diff < 60) return t.timeNow;
+  if (diff < 3600) return `${Math.floor(diff / 60)} ${t.timeMin}`;
+  if (diff < 86400) return `${Math.floor(diff / 3600)} ${t.timeHour}`;
+  return `${Math.floor(diff / 86400)} ${t.timeDay}`;
 }
 
 export function AppHeader() {
+  const t = useT();
   const page = useBreadcrumb();
   const logout = useAuthStore((s) => s.logout);
   const navigate = useNavigate();
   const notifications = useNotificationsStore((s) => s.notifications);
   const markAllRead = useNotificationsStore((s) => s.markAllRead);
   const clear = useNotificationsStore((s) => s.clear);
+  const { lang, toggle: toggleLang } = useLangStore();
 
   const { theme, setTheme } = useTheme();
   const isDark = theme === "dark" || (theme === "system" && window.matchMedia("(prefers-color-scheme: dark)").matches);
@@ -78,12 +82,21 @@ export function AppHeader() {
         <AppBreadcrumbs page={page} />
       </div>
 
-      {/* Right: notifications + logout */}
+      {/* Right: lang + theme + notifications + logout */}
       <div className="flex items-center gap-1">
+        {/* Language toggle */}
+        <button
+          className="inline-flex h-8 items-center justify-center rounded-md px-2 text-[11px] font-bold text-muted-foreground transition-colors hover:bg-accent hover:text-foreground"
+          title={lang === "it" ? "Switch to English" : "Passa all'italiano"}
+          onClick={toggleLang}
+        >
+          {lang === "it" ? "EN" : "IT"}
+        </button>
+
         {/* Theme toggle */}
         <button
           className="inline-flex size-8 items-center justify-center rounded-md text-muted-foreground transition-colors hover:bg-accent hover:text-foreground"
-          title={isDark ? "Passa a tema chiaro" : "Passa a tema scuro"}
+          title={isDark ? t.header.themeLight : t.header.themeDark}
           onClick={() => setTheme(isDark ? "light" : "dark")}
         >
           {isDark ? <Sun className="size-4" /> : <Moon className="size-4" />}
@@ -93,7 +106,7 @@ export function AppHeader() {
         <div className="relative" ref={dropdownRef}>
           <button
             className="relative inline-flex size-8 items-center justify-center rounded-md text-muted-foreground transition-colors hover:bg-accent hover:text-foreground"
-            title="Notifiche"
+            title={t.header.notifications}
             onClick={handleOpenBell}
           >
             <Bell className="size-4" />
@@ -107,21 +120,21 @@ export function AppHeader() {
           {open && (
             <div className="absolute right-0 top-10 z-50 w-80 rounded-lg border bg-popover shadow-lg text-popover-foreground">
               <div className="flex items-center justify-between border-b px-4 py-2.5">
-                <span className="text-sm font-semibold">Notifiche</span>
+                <span className="text-sm font-semibold">{t.header.notifications}</span>
                 {notifications.length > 0 && (
                   <button
                     className="flex items-center gap-1 text-xs text-muted-foreground hover:text-destructive transition-colors"
                     onClick={clear}
                   >
                     <Trash2 className="size-3" />
-                    Cancella tutto
+                    {t.header.clearAll}
                   </button>
                 )}
               </div>
 
               {notifications.length === 0 ? (
                 <div className="px-4 py-8 text-center text-sm text-muted-foreground">
-                  Nessuna notifica
+                  {t.header.noNotifications}
                 </div>
               ) : (
                 <ul className="max-h-80 overflow-y-auto divide-y">
@@ -137,13 +150,13 @@ export function AppHeader() {
                         </span>
                       </div>
                       <div className="min-w-0 flex-1">
-                        <p className="font-medium leading-snug">Nuovo dominio caricato</p>
+                        <p className="font-medium leading-snug">{t.header.newDomain}</p>
                         {n.domains[0] && (
                           <p className="mt-0.5 truncate text-xs text-primary hover:underline">
                             {n.domains[0]}
                           </p>
                         )}
-                        <p className="mt-1 text-xs text-muted-foreground">{timeAgo(n.timestamp)}</p>
+                        <p className="mt-1 text-xs text-muted-foreground">{timeAgo(n.timestamp, t.header)}</p>
                       </div>
                     </li>
                   ))}
@@ -156,7 +169,7 @@ export function AppHeader() {
         {/* Logout */}
         <button
           className="inline-flex size-8 items-center justify-center rounded-md text-destructive transition-colors hover:bg-destructive/10"
-          title="Esci"
+          title={t.header.logout}
           onClick={handleLogout}
         >
           <LogOut className="size-4" />

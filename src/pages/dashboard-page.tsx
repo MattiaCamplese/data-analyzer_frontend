@@ -12,15 +12,17 @@ import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from "@/components/ui/table";
 import { Pagination, PaginationContent, PaginationEllipsis, PaginationItem, PaginationLink, PaginationNext, PaginationPrevious } from "@/components/ui/pagination";
 import { RiskTrendChart } from "@/components/dashboard/risk-trend-chart";
+import { useT } from "@/hooks/use-t";
 
-const RISK_LEVELS = [
-  { key: "critical", label: "Critico",  test: (s: number) => s > 80 },
-  { key: "high",     label: "Alto",     test: (s: number) => s > 60 && s <= 80 },
-  { key: "medium",   label: "Medio",    test: (s: number) => s > 30 && s <= 60 },
-  { key: "low",      label: "Basso",    test: (s: number) => s <= 30 },
-] as const;
+const RISK_LEVEL_KEYS = [
+  { key: "critical" as const, test: (s: number) => s > 80 },
+  { key: "high"     as const, test: (s: number) => s > 60 && s <= 80 },
+  { key: "medium"   as const, test: (s: number) => s > 30 && s <= 60 },
+  { key: "low"      as const, test: (s: number) => s <= 30 },
+];
 
 export default function DashboardPage() {
+  const t = useT();
   const PER_PAGE = 10;
   const [search, setSearch] = useState("");
   const [page, setPage] = useState(1);
@@ -75,7 +77,7 @@ export default function DashboardPage() {
 
   if (riskFilters.length > 0) {
     filtered = filtered.filter((r) =>
-      riskFilters.some((key) => RISK_LEVELS.find((l) => l.key === key)?.test(r.risk_score))
+      riskFilters.some((key) => RISK_LEVEL_KEYS.find((l) => l.key === key)?.test(r.risk_score))
     );
   }
 
@@ -120,7 +122,7 @@ export default function DashboardPage() {
   if (isError) {
     return (
       <div className="rounded-xl border border-destructive/30 bg-destructive/5 p-8 text-center text-sm text-destructive">
-        Errore nel caricamento dei report.
+        {t.dash.loadError}
       </div>
     );
   }
@@ -130,28 +132,28 @@ export default function DashboardPage() {
       {/* Stat cards */}
       <div className="grid grid-cols-2 gap-4 lg:grid-cols-4">
         <Card className="shadow-none dark:ring-0">
-          <CardHeader><CardTitle className="text-xs font-medium text-muted-foreground uppercase tracking-wide">Domini analizzati</CardTitle></CardHeader>
+          <CardHeader><CardTitle className="text-xs font-medium text-muted-foreground uppercase tracking-wide">{t.dash.domains}</CardTitle></CardHeader>
           <CardContent className="flex items-end justify-between">
             <p className="text-2xl font-bold tabular-nums">{reports?.length ?? 0}</p>
             <Globe className="size-4 text-muted-foreground" />
           </CardContent>
         </Card>
         <Card className="shadow-none dark:ring-0">
-          <CardHeader><CardTitle className="text-xs font-medium text-muted-foreground uppercase tracking-wide">Risk score medio</CardTitle></CardHeader>
+          <CardHeader><CardTitle className="text-xs font-medium text-muted-foreground uppercase tracking-wide">{t.dash.avgRisk}</CardTitle></CardHeader>
           <CardContent className="flex items-end justify-between">
             <p className={cn("text-2xl font-bold tabular-nums", getRiskInfo(avgRisk).textClass)}>{avgRisk}</p>
             <TrendingUp className="size-4 text-muted-foreground" />
           </CardContent>
         </Card>
         <Card className={cn("shadow-none dark:ring-0", highRisk > 0 && "border-orange-500/40")}>
-          <CardHeader><CardTitle className="text-xs font-medium text-muted-foreground uppercase tracking-wide">Alto rischio</CardTitle></CardHeader>
+          <CardHeader><CardTitle className="text-xs font-medium text-muted-foreground uppercase tracking-wide">{t.dash.highRisk}</CardTitle></CardHeader>
           <CardContent className="flex items-end justify-between">
             <p className={cn("text-2xl font-bold tabular-nums", highRisk > 0 && "text-orange-500")}>{highRisk}</p>
             <AlertTriangle className="size-4 text-muted-foreground" />
           </CardContent>
         </Card>
         <Card className={cn("shadow-none dark:ring-0", critical > 0 && "border-destructive/40")}>
-          <CardHeader><CardTitle className="text-xs font-medium text-muted-foreground uppercase tracking-wide">Critici</CardTitle></CardHeader>
+          <CardHeader><CardTitle className="text-xs font-medium text-muted-foreground uppercase tracking-wide">{t.dash.critical}</CardTitle></CardHeader>
           <CardContent className="flex items-end justify-between">
             <p className={cn("text-2xl font-bold tabular-nums", critical > 0 && "text-destructive")}>{critical}</p>
             <ShieldCheck className="size-4 text-muted-foreground" />
@@ -166,7 +168,7 @@ export default function DashboardPage() {
       <Card className="shadow-none dark:ring-0 gap-0">
         <CardHeader className="border-b pb-4">
           <div className="flex flex-col gap-3 sm:flex-row sm:items-center sm:justify-between">
-            <CardTitle>Domini monitorati</CardTitle>
+            <CardTitle>{t.dash.monitoredTable}</CardTitle>
             <div className="flex items-center gap-2">
               <UploadButton />
 
@@ -179,7 +181,7 @@ export default function DashboardPage() {
                   onClick={() => setFilterOpen((o) => !o)}
                 >
                   <SlidersHorizontal className="size-3.5" />
-                  <span className="hidden sm:inline">Filtra</span>
+                  <span className="hidden sm:inline">{t.dash.filter}</span>
                   {activeFilterCount > 0 && (
                     <span className="flex size-4 items-center justify-center rounded-full bg-primary text-[10px] font-bold text-primary-foreground">
                       {activeFilterCount}
@@ -189,12 +191,11 @@ export default function DashboardPage() {
 
                 {filterOpen && (
                   <div className="absolute right-0 top-9 z-50 w-56 rounded-lg border bg-popover p-3 shadow-lg text-popover-foreground">
-                    {/* Risk score */}
                     <p className="mb-2 text-[10px] font-semibold uppercase tracking-wider text-muted-foreground">
                       Risk Score
                     </p>
                     <div className="flex flex-col gap-1">
-                      {RISK_LEVELS.map(({ key, label }) => (
+                      {RISK_LEVEL_KEYS.map(({ key }) => (
                         <label key={key} className="flex cursor-pointer items-center gap-2 rounded px-1 py-0.5 text-sm hover:bg-muted/50">
                           <input
                             type="checkbox"
@@ -202,7 +203,7 @@ export default function DashboardPage() {
                             onChange={() => toggleRisk(key)}
                             className="accent-primary"
                           />
-                          {label}
+                          {t.risk[key]}
                         </label>
                       ))}
                     </div>
@@ -212,9 +213,9 @@ export default function DashboardPage() {
                         <div className="my-2.5 border-t" />
                         <button
                           className="w-full rounded px-2 py-1 text-xs text-destructive hover:bg-destructive/10"
-                          onClick={() => { setRiskFilters([]); setDateSort(null); setPage(1); }}
+                          onClick={() => { setRiskFilters([]); setPage(1); }}
                         >
-                          Rimuovi tutti i filtri
+                          {t.dash.removeFilters}
                         </button>
                       </>
                     )}
@@ -226,7 +227,7 @@ export default function DashboardPage() {
                 <Search className="absolute left-3 top-1/2 size-3.5 -translate-y-1/2 text-muted-foreground" />
                 <input
                   type="text"
-                  placeholder="Cerca dominio..."
+                  placeholder={t.dash.searchPlaceholder}
                   value={search}
                   onChange={(e) => { setSearch(e.target.value); setPage(1); }}
                   className="h-8 w-full rounded-md border bg-background pl-8 pr-3 text-sm outline-none transition focus:ring-2 focus:ring-ring/30 sm:w-64"
@@ -241,37 +242,37 @@ export default function DashboardPage() {
               <TableRow>
                 <TableHead className="pl-6">
                   <button onClick={() => handleSort("domain")} className="flex items-center gap-1 hover:text-foreground transition-colors">
-                    Dominio <SortIcon col="domain" />
+                    {t.dash.colDomain} <SortIcon col="domain" />
                   </button>
                 </TableHead>
                 <TableHead>
                   <button onClick={() => handleSort("risk")} className="flex items-center gap-1 hover:text-foreground transition-colors">
-                    Risk Score <SortIcon col="risk" />
+                    {t.dash.colRisk} <SortIcon col="risk" />
                   </button>
                 </TableHead>
                 <TableHead className="hidden sm:table-cell">
                   <button onClick={() => handleSort("asset")} className="flex items-center gap-1 hover:text-foreground transition-colors">
-                    Asset <SortIcon col="asset" />
+                    {t.dash.colAsset} <SortIcon col="asset" />
                   </button>
                 </TableHead>
                 <TableHead className="hidden md:table-cell">
                   <button onClick={() => handleSort("vulns")} className="flex items-center gap-1 hover:text-foreground transition-colors">
-                    Vulnerabilità <SortIcon col="vulns" />
+                    {t.dash.colVulns} <SortIcon col="vulns" />
                   </button>
                 </TableHead>
                 <TableHead className="hidden md:table-cell">
                   <button onClick={() => handleSort("leak")} className="flex items-center gap-1 hover:text-foreground transition-colors">
-                    Data Leak <SortIcon col="leak" />
+                    {t.dash.colLeak} <SortIcon col="leak" />
                   </button>
                 </TableHead>
                 <TableHead className="hidden lg:table-cell">
                   <button onClick={() => handleSort("waf")} className="flex items-center gap-1 hover:text-foreground transition-colors">
-                    WAF <SortIcon col="waf" />
+                    {t.dash.colWaf} <SortIcon col="waf" />
                   </button>
                 </TableHead>
                 <TableHead className="hidden lg:table-cell">
                   <button onClick={() => handleSort("date")} className="flex items-center gap-1 hover:text-foreground transition-colors">
-                    Data <SortIcon col="date" />
+                    {t.dash.colDate} <SortIcon col="date" />
                   </button>
                 </TableHead>
                 <TableHead className="pr-6 text-right w-12"></TableHead>
@@ -281,7 +282,7 @@ export default function DashboardPage() {
               {paginated.length === 0 ? (
                 <TableRow>
                   <TableCell colSpan={8} className="py-12 text-center text-muted-foreground">
-                    Nessun dominio trovato.
+                    {t.dash.noResults}
                   </TableCell>
                 </TableRow>
               ) : (
@@ -327,7 +328,7 @@ export default function DashboardPage() {
                         {report.waf.count > 0 ? (
                           <span className="text-xs text-green-600 dark:text-green-400 font-medium">{report.waf.count} asset</span>
                         ) : (
-                          <span className="text-xs text-muted-foreground">No</span>
+                          <span className="text-xs text-muted-foreground">{t.dash.wafNone}</span>
                         )}
                       </TableCell>
                       <TableCell className="hidden lg:table-cell text-muted-foreground text-xs">
@@ -338,7 +339,7 @@ export default function DashboardPage() {
                           <Button
                             size="icon-sm"
                             variant="outline"
-                            title="Confronta scansioni"
+                            title={t.dash.compareTooltip}
                             className="text-muted-foreground hover:text-primary hover:border-primary/50"
                             onClick={() => navigate(`/compare/${encodeURIComponent(report.domain_name)}`)}
                           >
@@ -350,10 +351,10 @@ export default function DashboardPage() {
                             className="text-muted-foreground hover:text-destructive hover:border-destructive/50"
                             disabled={isDeleting}
                             onClick={() => {
-                              if (confirm(`Eliminare l'analisi di ${report.domain_name}?`)) {
+                              if (confirm(t.dash.deleteConfirm(report.domain_name))) {
                                 deleteReport(report.idsummary, {
-                                  onSuccess: () => toast.success(`${report.domain_name} eliminato`),
-                                  onError: (err: Error) => toast.error(`Errore: ${err.message}`),
+                                  onSuccess: () => toast.success(t.dash.deleteSuccess(report.domain_name)),
+                                  onError: (err: Error) => toast.error(t.dash.deleteError(err.message)),
                                 });
                               }
                             }}
@@ -381,7 +382,7 @@ export default function DashboardPage() {
                 onClick={() => setPage(p => Math.max(1, p - 1))}
                 disabled={currentPage === 1}
               >
-                ← Prec
+                {t.dash.prevPage}
               </Button>
               <span className="text-xs text-muted-foreground">
                 {currentPage} / {totalPages}
@@ -393,13 +394,13 @@ export default function DashboardPage() {
                 onClick={() => setPage(p => Math.min(totalPages, p + 1))}
                 disabled={currentPage === totalPages}
               >
-                Succ →
+                {t.dash.nextPage}
               </Button>
             </div>
 
             {/* Desktop: full pagination */}
             <div className="hidden sm:flex items-center justify-between text-xs text-muted-foreground">
-              <span>{filtered.length} domini · pagina {currentPage} di {totalPages}</span>
+              <span>{t.dash.pageInfo(currentPage, totalPages, filtered.length)}</span>
               <Pagination className="w-auto mx-0">
                 <PaginationContent>
                   <PaginationItem>

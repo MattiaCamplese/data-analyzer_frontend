@@ -16,20 +16,10 @@ import { DataLeakChart } from "@/components/report/dataleak-chart";
 import { EmailSecurityCard } from "@/components/report/email-security-card";
 import { NetworkInfoCard } from "@/components/report/network-info-card";
 import { WafCdnCard } from "@/components/report/waf-cdn-card";
-
-const SCORE_CARDS = [
-  { key: "servizi_esposti_score",      label: "Servizi Esposti" },
-  { key: "dataleak_score",             label: "Data Leak" },
-  { key: "rapporto_leak_email_score",  label: "Leak Email" },
-  { key: "spoofing_score",             label: "Email Spoofing" },
-  { key: "open_ports_score",           label: "Porte Aperte" },
-  { key: "blacklist_score",            label: "Blacklist" },
-  { key: "vulnerability_score_active",  label: "Vuln. Attive" },
-  { key: "vulnerability_score_passive", label: "Vuln. Passive" },
-  { key: "certificate_score",          label: "Certificati SSL" },
-] as const;
+import { useT } from "@/hooks/use-t";
 
 export default function ReportPage() {
+  const t = useT();
   const { id: domain } = useParams<{ id: string }>();
   const [searchParams, setSearchParams] = useSearchParams();
   const navigate = useNavigate();
@@ -57,13 +47,25 @@ export default function ReportPage() {
   if (isError || !report) {
     return (
       <div className="rounded-xl border border-destructive/30 bg-destructive/5 p-8 text-center">
-        <p className="text-sm text-destructive">Report non trovato.</p>
+        <p className="text-sm text-destructive">{t.report.notFound}</p>
         <Link to="/" className="mt-4 inline-block text-sm text-primary hover:underline">
-          ← Torna alla dashboard
+          {t.report.backToDash}
         </Link>
       </div>
     );
   }
+
+  const SCORE_CARDS = [
+    { key: "servizi_esposti_score",      label: t.report.scoreServizi },
+    { key: "dataleak_score",             label: t.report.scoreLeak },
+    { key: "rapporto_leak_email_score",  label: t.report.scoreLeakEmail },
+    { key: "spoofing_score",             label: t.report.scoreSpoofing },
+    { key: "open_ports_score",           label: t.report.scorePorti },
+    { key: "blacklist_score",            label: t.report.scoreBlacklist },
+    { key: "vulnerability_score_active",  label: t.report.scoreVulnAct },
+    { key: "vulnerability_score_passive", label: t.report.scoreVulnPass },
+    { key: "certificate_score",          label: t.report.scoreCert },
+  ] as const;
 
   const risk = getRiskInfo(report.risk_score);
   const history = historyData?.items ?? [];
@@ -82,7 +84,6 @@ export default function ReportPage() {
   }
 
   function handleCompare() {
-    // Pass current scan as A (attuale, blu), compare page auto-picks the older one as B (base)
     navigate(`/compare/${encodeURIComponent(domain ?? "")}?a=${currentScanId}`);
   }
 
@@ -122,7 +123,7 @@ export default function ReportPage() {
                 >
                   {history.map((item, idx) => (
                     <option key={item.idsummary} value={item.idsummary}>
-                      {idx === 0 ? "Ultimo: " : ""}{formatDate(item.creation_date)}
+                      {idx === 0 ? t.report.versionLatest : ""}{formatDate(item.creation_date)}
                     </option>
                   ))}
                 </select>
@@ -144,11 +145,11 @@ export default function ReportPage() {
           <button
             onClick={handleCompare}
             disabled={historyLoaded && !hasHistory}
-            title={historyLoaded && !hasHistory ? "Carica almeno 2 scansioni per confrontare" : "Confronta scansioni storiche"}
+            title={historyLoaded && !hasHistory ? t.report.compareDisabled : t.report.compareTooltip}
             className="flex items-center gap-1.5 rounded-md border bg-background px-3 py-1.5 text-xs font-medium transition-colors hover:bg-accent disabled:cursor-not-allowed disabled:opacity-40"
           >
             <GitCompare className="size-3.5" />
-            Confronta
+            {t.report.compare}
           </button>
 
           {/* PDF export */}
@@ -157,7 +158,7 @@ export default function ReportPage() {
             className="flex items-center gap-1.5 rounded-md border bg-background px-3 py-1.5 text-xs font-medium transition-colors hover:bg-accent"
           >
             <Download className="size-3.5" />
-            Esporta PDF
+            {t.report.exportPdf}
           </button>
         </div>
       </div>
@@ -166,25 +167,25 @@ export default function ReportPage() {
       {scanId && (
         <div className="no-print flex items-center justify-between rounded-lg border border-amber-500/30 bg-amber-500/5 px-4 py-2.5 text-xs">
           <span className="text-amber-700 dark:text-amber-400">
-            Stai visualizzando uno snapshot storico del {formatDate(report.creation_date)}
+            {t.report.historyBanner(formatDate(report.creation_date))}
           </span>
           <button
             onClick={() => setSearchParams({})}
             className="font-medium text-amber-700 hover:underline dark:text-amber-400"
           >
-            Vai all'ultimo →
+            {t.report.goToLatest}
           </button>
         </div>
       )}
 
       <div ref={printRef} className="flex flex-col gap-6">
 
-        {/* Gauge + Sommario */}
+        {/* Gauge + Summary */}
         <div className="grid gap-4 md:grid-cols-[220px_1fr]">
           <RiskGauge score={report.risk_score} domainName={report.domain_name} />
           <Card className="shadow-none dark:ring-0">
             <CardHeader>
-              <CardTitle className="text-sm">Sommario</CardTitle>
+              <CardTitle className="text-sm">{t.report.summary}</CardTitle>
             </CardHeader>
             <CardContent>
               <Markdown
@@ -204,7 +205,7 @@ export default function ReportPage() {
         {/* Score cards */}
         <div className="print-section">
           <p className="mb-3 text-xs font-semibold uppercase tracking-wide text-muted-foreground">
-            Punteggi di Rischio
+            {t.report.riskScores}
           </p>
           <div className="grid grid-cols-2 gap-3 sm:grid-cols-3 xl:grid-cols-5 print:grid-cols-3">
             {SCORE_CARDS.map(({ key, label }) => (
@@ -216,7 +217,7 @@ export default function ReportPage() {
         {/* Charts */}
         <div className="print-section">
           <p className="mb-3 text-xs font-semibold uppercase tracking-wide text-muted-foreground">
-            Analisi Dettagliata
+            {t.report.detailedAnalysis}
           </p>
           <div className="grid gap-4 md:grid-cols-3 print:grid-cols-1">
             <PortsChart nPort={report.n_port} />
@@ -228,7 +229,7 @@ export default function ReportPage() {
         {/* Technical details */}
         <div className="print-section">
           <p className="mb-3 text-xs font-semibold uppercase tracking-wide text-muted-foreground">
-            Dettagli Tecnici
+            {t.report.technicalDetails}
           </p>
           <div className="grid gap-4 md:grid-cols-3 print:grid-cols-1">
             <EmailSecurityCard emailSecurity={report.email_security} />

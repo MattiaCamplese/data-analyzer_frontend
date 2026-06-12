@@ -10,6 +10,8 @@ import { getRiskInfo, formatDate } from "@/lib/risk-utils";
 import { cn } from "@/lib/utils";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import type { SecurityReport } from "@/types/report";
+import type { EmailSecurity } from "@/types/report";
+import { useT } from "@/hooks/use-t";
 
 // ── palette ────────────────────────────────────────────────────────────────
 const CLR_A = "#3b82f6"; // blue   — A = attuale (corrente)
@@ -28,15 +30,16 @@ function totalLeaks(r: SecurityReport) {
 
 // ── delta badge ────────────────────────────────────────────────────────────
 function DeltaChip({ a, b, higherIsBad = true }: { a: number; b: number; higherIsBad?: boolean }) {
-  const diff = a - b; // A = attuale, B = precedente → diff negativo = migliorato
-  if (diff === 0) return <span className="flex items-center gap-0.5 text-xs text-muted-foreground"><Minus className="size-3" /> invariato</span>;
+  const t = useT();
+  const diff = a - b;
+  if (diff === 0) return <span className="flex items-center gap-0.5 text-xs text-muted-foreground"><Minus className="size-3" /> {t.cmp.unchanged}</span>;
   const improved = higherIsBad ? diff < 0 : diff > 0;
   const Icon = diff > 0 ? TrendingUp : TrendingDown;
   return (
     <span className={cn("flex items-center gap-1 text-xs font-semibold", improved ? "text-green-500" : "text-red-500")}>
       <Icon className="size-3" />
       {diff > 0 ? "+" : ""}{diff}
-      <span className="font-normal">{improved ? "migliorato" : "peggiorato"}</span>
+      <span className="font-normal">{improved ? t.cmp.improved : t.cmp.worsened}</span>
     </span>
   );
 }
@@ -77,7 +80,6 @@ function CmpCard({ label, a, b, higherIsBad = true, suffix = "" }: CmpCardProps)
 }
 
 // ── email security compare ─────────────────────────────────────────────────
-
 function dmarcLevel(policy: string) {
   return policy === "reject" ? 3 : policy === "quarantine" ? 2 : 1;
 }
@@ -93,8 +95,10 @@ function dmarcBadgeClass(policy: string) {
 }
 
 function DmarcBar({ policy }: { policy: string }) {
+  const t = useT();
   const pct = (dmarcLevel(policy) / 3) * 100;
   const color = dmarcColor(policy);
+  const label = policy === "reject" ? t.cmp.dmarcMax : policy === "quarantine" ? t.cmp.dmarcPartial : t.cmp.dmarcNone;
   return (
     <div className="flex flex-col gap-1.5 min-w-0">
       <span className={cn("w-fit rounded-full px-2 py-0.5 text-xs font-semibold", dmarcBadgeClass(policy))}>
@@ -103,14 +107,13 @@ function DmarcBar({ policy }: { policy: string }) {
       <div className="h-1.5 w-full overflow-hidden rounded-full bg-muted">
         <div className="h-full rounded-full transition-all" style={{ width: `${pct}%`, background: color }} />
       </div>
-      <span className="text-[10px] text-muted-foreground">
-        {policy === "reject" ? "Protezione massima" : policy === "quarantine" ? "Protezione parziale" : "Nessuna protezione"}
-      </span>
+      <span className="text-[10px] text-muted-foreground">{label}</span>
     </div>
   );
 }
 
 function SpoofBadge({ value }: { value: string }) {
+  const t = useT();
   const bad = !!value && !/not possible/i.test(value);
   const Icon = bad ? ShieldX : ShieldCheck;
   return (
@@ -118,7 +121,7 @@ function SpoofBadge({ value }: { value: string }) {
       bad ? "bg-red-500/10 text-red-600 dark:text-red-400" : "bg-green-500/10 text-green-600 dark:text-green-400"
     )}>
       <Icon className="size-3" />
-      {bad ? "Possibile" : "Protetto"}
+      {bad ? t.cmp.spoofPossible : t.cmp.spoofProtected}
     </span>
   );
 }
@@ -138,29 +141,27 @@ function BlacklistBar({ detections, total }: { detections: number; total: number
   );
 }
 
-import type { EmailSecurity } from "@/types/report";
-
 interface EmailCmpProps {
   a: EmailSecurity; b: EmailSecurity;
   dateA: string;   dateB: string;
 }
 
 function EmailSecurityCompare({ a, b, dateA, dateB }: EmailCmpProps) {
+  const t = useT();
   const spoofA = !!a.spoofable && !/not possible/i.test(a.spoofable);
   const spoofB = !!b.spoofable && !/not possible/i.test(b.spoofable);
 
   const lvlA = dmarcLevel(a.dmarc_policy);
   const lvlB = dmarcLevel(b.dmarc_policy);
-  const dmarcDiff = lvlA - lvlB; // positive = A stricter = improved
+  const dmarcDiff = lvlA - lvlB;
 
-  const blDiff = a.blacklist_detections - b.blacklist_detections; // negative = fewer = improved
+  const blDiff = a.blacklist_detections - b.blacklist_detections;
 
-  // List diff: which blacklists changed between A (current) and B (previous)
   const listA = new Set(a.blacklist_detected_list);
   const listB = new Set(b.blacklist_detected_list);
-  const newDetections  = [...listA].filter((x) => !listB.has(x)); // in A not B = newly appeared (worse)
-  const resolved       = [...listB].filter((x) => !listA.has(x)); // in B not A = resolved (better)
-  const persistent     = [...listA].filter((x) => listB.has(x));  // in both = unchanged
+  const newDetections  = [...listA].filter((x) => !listB.has(x));
+  const resolved       = [...listB].filter((x) => !listA.has(x));
+  const persistent     = [...listA].filter((x) => listB.has(x));
 
   const ROW = "border-b last:border-0";
   const CELL = "py-3 align-top";
@@ -169,7 +170,7 @@ function EmailSecurityCompare({ a, b, dateA, dateB }: EmailCmpProps) {
     <Card className="shadow-none dark:ring-0">
       <CardHeader className="pb-2">
         <CardTitle className="text-xs font-semibold uppercase tracking-wide text-muted-foreground">
-          Email Security
+          {t.cmp.emailTitle}
         </CardTitle>
       </CardHeader>
       <CardContent className="p-0">
@@ -177,53 +178,53 @@ function EmailSecurityCompare({ a, b, dateA, dateB }: EmailCmpProps) {
           <table className="w-full text-sm">
             <thead>
               <tr className="border-b text-[10px] font-bold uppercase tracking-wider">
-                <th className="py-2 pl-4 text-left text-muted-foreground w-28">Metrica</th>
-                <th className="py-2 text-left" style={{ color: CLR_A }}>A — Attuale · {formatDate(dateA)}</th>
-                <th className="py-2 text-left" style={{ color: CLR_B }}>B — Precedente · {formatDate(dateB)}</th>
-                <th className="py-2 pr-4 text-right text-muted-foreground">Variazione</th>
+                <th className="py-2 pl-4 text-left text-muted-foreground w-28">{t.cmp.metrica}</th>
+                <th className="py-2 text-left" style={{ color: CLR_A }}>A · {formatDate(dateA)}</th>
+                <th className="py-2 text-left" style={{ color: CLR_B }}>B · {formatDate(dateB)}</th>
+                <th className="py-2 pr-4 text-right text-muted-foreground">{t.cmp.variazione}</th>
               </tr>
             </thead>
             <tbody>
               {/* Spoofing */}
               <tr className={ROW}>
-                <td className={cn(CELL, "pl-4 text-xs font-medium text-muted-foreground")}>Spoofing</td>
+                <td className={cn(CELL, "pl-4 text-xs font-medium text-muted-foreground")}>{t.cmp.spoofing}</td>
                 <td className={CELL}><SpoofBadge value={a.spoofable} /></td>
                 <td className={CELL}><SpoofBadge value={b.spoofable} /></td>
                 <td className={cn(CELL, "pr-4 text-right")}>
                   {spoofA === spoofB ? (
-                    <span className="flex items-center justify-end gap-1 text-xs text-muted-foreground"><Minus className="size-3" /> invariato</span>
+                    <span className="flex items-center justify-end gap-1 text-xs text-muted-foreground"><Minus className="size-3" /> {t.cmp.unchanged}</span>
                   ) : !spoofA && spoofB ? (
-                    <span className="flex items-center justify-end gap-1 text-xs font-semibold text-green-500"><ShieldCheck className="size-3" /> risolto</span>
+                    <span className="flex items-center justify-end gap-1 text-xs font-semibold text-green-500"><ShieldCheck className="size-3" /> {t.cmp.resolved}</span>
                   ) : (
-                    <span className="flex items-center justify-end gap-1 text-xs font-semibold text-red-500"><ShieldAlert className="size-3" /> peggiorato</span>
+                    <span className="flex items-center justify-end gap-1 text-xs font-semibold text-red-500"><ShieldAlert className="size-3" /> {t.cmp.worsened}</span>
                   )}
                 </td>
               </tr>
 
               {/* DMARC */}
               <tr className={ROW}>
-                <td className={cn(CELL, "pl-4 text-xs font-medium text-muted-foreground")}>DMARC</td>
+                <td className={cn(CELL, "pl-4 text-xs font-medium text-muted-foreground")}>{t.cmp.dmarc}</td>
                 <td className={cn(CELL, "pr-6")}><DmarcBar policy={a.dmarc_policy} /></td>
                 <td className={cn(CELL, "pr-6")}><DmarcBar policy={b.dmarc_policy} /></td>
                 <td className={cn(CELL, "pr-4 text-right")}>
                   {dmarcDiff === 0 ? (
-                    <span className="flex items-center justify-end gap-1 text-xs text-muted-foreground"><Minus className="size-3" /> invariato</span>
+                    <span className="flex items-center justify-end gap-1 text-xs text-muted-foreground"><Minus className="size-3" /> {t.cmp.unchanged}</span>
                   ) : dmarcDiff > 0 ? (
-                    <span className="flex items-center justify-end gap-1 text-xs font-semibold text-green-500"><TrendingDown className="size-3" /> migliorato</span>
+                    <span className="flex items-center justify-end gap-1 text-xs font-semibold text-green-500"><TrendingDown className="size-3" /> {t.cmp.improved}</span>
                   ) : (
-                    <span className="flex items-center justify-end gap-1 text-xs font-semibold text-red-500"><TrendingUp className="size-3" /> peggiorato</span>
+                    <span className="flex items-center justify-end gap-1 text-xs font-semibold text-red-500"><TrendingUp className="size-3" /> {t.cmp.worsened}</span>
                   )}
                 </td>
               </tr>
 
               {/* Blacklist count */}
               <tr className={ROW}>
-                <td className={cn(CELL, "pl-4 text-xs font-medium text-muted-foreground")}>Blacklist</td>
+                <td className={cn(CELL, "pl-4 text-xs font-medium text-muted-foreground")}>{t.cmp.blacklist}</td>
                 <td className={cn(CELL, "pr-6")}><BlacklistBar detections={a.blacklist_detections} total={a.blacklist_total_list} /></td>
                 <td className={cn(CELL, "pr-6")}><BlacklistBar detections={b.blacklist_detections} total={b.blacklist_total_list} /></td>
                 <td className={cn(CELL, "pr-4 text-right")}>
                   {blDiff === 0 ? (
-                    <span className="flex items-center justify-end gap-1 text-xs text-muted-foreground"><Minus className="size-3" /> invariato</span>
+                    <span className="flex items-center justify-end gap-1 text-xs text-muted-foreground"><Minus className="size-3" /> {t.cmp.unchanged}</span>
                   ) : blDiff < 0 ? (
                     <span className="flex items-center justify-end gap-1 text-xs font-semibold text-green-500"><TrendingDown className="size-3" /> {blDiff}</span>
                   ) : (
@@ -235,7 +236,7 @@ function EmailSecurityCompare({ a, b, dateA, dateB }: EmailCmpProps) {
               {/* Blacklist list diff */}
               {(newDetections.length > 0 || resolved.length > 0 || persistent.length > 0) && (
                 <tr>
-                  <td className={cn(CELL, "pl-4 text-xs font-medium text-muted-foreground")}>Liste</td>
+                  <td className={cn(CELL, "pl-4 text-xs font-medium text-muted-foreground")}>{t.cmp.lists}</td>
                   <td colSpan={3} className={cn(CELL, "pr-4")}>
                     <div className="flex flex-wrap gap-1.5">
                       {newDetections.map((l) => (
@@ -255,7 +256,7 @@ function EmailSecurityCompare({ a, b, dateA, dateB }: EmailCmpProps) {
                       ))}
                     </div>
                     {newDetections.length === 0 && resolved.length === 0 && persistent.length === 0 && (
-                      <span className="text-xs text-muted-foreground">Nessuna blacklist rilevata</span>
+                      <span className="text-xs text-muted-foreground">{t.cmp.noBlacklist}</span>
                     )}
                   </td>
                 </tr>
@@ -271,6 +272,7 @@ function EmailSecurityCompare({ a, b, dateA, dateB }: EmailCmpProps) {
 // ── version selector ───────────────────────────────────────────────────────
 interface VSelProps { items: SecurityReport[]; value: string; onChange: (id: string) => void; label: string; color: string; exclude?: string }
 function VersionSelect({ items, value, onChange, label, color, exclude }: VSelProps) {
+  const t = useT();
   const available = items.filter((i) => i.idsummary !== exclude);
   return (
     <div className="flex flex-col gap-1.5">
@@ -282,10 +284,10 @@ function VersionSelect({ items, value, onChange, label, color, exclude }: VSelPr
           className="h-9 w-full appearance-none rounded-md border bg-background pl-3 pr-8 text-sm font-medium text-foreground outline-none transition focus:ring-2 focus:ring-ring/30 cursor-pointer"
           style={{ borderColor: value ? color : undefined }}
         >
-          <option value="" disabled>Seleziona scansione…</option>
+          <option value="" disabled>{t.cmp.selectScan}</option>
           {available.map((item) => (
             <option key={item.idsummary} value={item.idsummary}>
-              {formatDate(item.creation_date)} — score {item.risk_score}
+              {formatDate(item.creation_date)} — {t.cmp.scoreLabel} {item.risk_score}
             </option>
           ))}
         </select>
@@ -331,6 +333,7 @@ function BarTooltip({ active, payload, label }: BTProps) {
 
 // ── page ───────────────────────────────────────────────────────────────────
 export default function ComparePage() {
+  const t = useT();
   const { domain } = useParams<{ domain: string }>();
   const [searchParams, setSearchParams] = useSearchParams();
   const decodedDomain = decodeURIComponent(domain ?? "");
@@ -340,9 +343,8 @@ export default function ComparePage() {
 
   const paramA = searchParams.get("a") ?? "";
   const paramB = searchParams.get("b") ?? "";
-  // A = attuale (più recente, blu), B = precedente (base, arancione) → delta A-B negativo = migliorato
-  const resolvedA = paramA || history[0]?.idsummary || "";                                          // più recente
-  const resolvedB = paramB || history.find((h) => h.idsummary !== resolvedA)?.idsummary || "";     // più vecchio
+  const resolvedA = paramA || history[0]?.idsummary || "";
+  const resolvedB = paramB || history.find((h) => h.idsummary !== resolvedA)?.idsummary || "";
 
   const { data: reportA, isLoading: loadingA } = useReport(decodedDomain, resolvedA || undefined);
   const { data: reportB, isLoading: loadingB } = useReport(decodedDomain, resolvedB || undefined);
@@ -358,32 +360,31 @@ export default function ComparePage() {
       <div className="flex flex-col gap-6">
         <Breadcrumb domain={decodedDomain} />
         <div className="rounded-xl border border-dashed p-12 text-center text-sm text-muted-foreground">
-          Sono necessarie almeno <strong>2 scansioni</strong> per confrontare.<br />
-          Carica una nuova analisi di <strong>{decodedDomain}</strong> per sbloccare questa funzione.
+          {t.cmp.needScans(decodedDomain)}
         </div>
       </div>
     );
   }
 
-  // ── chart data (computed only when both reports are ready) ─────────────
+  // ── chart data ──────────────────────────────────────────────────────────
   const radarData = (reportA && reportB) ? [
-    { subject: "Servizi",    A: reportA.servizi_esposti_score,      B: reportB.servizi_esposti_score },
-    { subject: "Data Leak",  A: reportA.dataleak_score,             B: reportB.dataleak_score },
-    { subject: "Leak Email", A: reportA.rapporto_leak_email_score,  B: reportB.rapporto_leak_email_score },
-    { subject: "Spoofing",   A: reportA.spoofing_score,             B: reportB.spoofing_score },
-    { subject: "Porte",      A: reportA.open_ports_score,           B: reportB.open_ports_score },
-    { subject: "Blacklist",  A: reportA.blacklist_score,            B: reportB.blacklist_score },
-    { subject: "Vuln. Att.", A: reportA.vulnerability_score_active, B: reportB.vulnerability_score_active },
-    { subject: "Vuln. Pass.",A: reportA.vulnerability_score_passive,B: reportB.vulnerability_score_passive },
-    { subject: "SSL/Cert",   A: reportA.certificate_score,          B: reportB.certificate_score },
+    { subject: "Servizi",     A: reportA.servizi_esposti_score,      B: reportB.servizi_esposti_score },
+    { subject: "Data Leak",   A: reportA.dataleak_score,             B: reportB.dataleak_score },
+    { subject: "Leak Email",  A: reportA.rapporto_leak_email_score,  B: reportB.rapporto_leak_email_score },
+    { subject: "Spoofing",    A: reportA.spoofing_score,             B: reportB.spoofing_score },
+    { subject: "Porte",       A: reportA.open_ports_score,           B: reportB.open_ports_score },
+    { subject: "Blacklist",   A: reportA.blacklist_score,            B: reportB.blacklist_score },
+    { subject: "Vuln. Att.",  A: reportA.vulnerability_score_active, B: reportB.vulnerability_score_active },
+    { subject: "Vuln. Pass.", A: reportA.vulnerability_score_passive,B: reportB.vulnerability_score_passive },
+    { subject: "SSL/Cert",    A: reportA.certificate_score,          B: reportB.certificate_score },
   ] : [];
 
   const vulnBarData = (reportA && reportB) ? [
-    { name: "Critiche att.", A: reportA.n_vulns.active.critical ?? 0, B: reportB.n_vulns.active.critical ?? 0 },
-    { name: "High att.",     A: reportA.n_vulns.active.high ?? 0,     B: reportB.n_vulns.active.high ?? 0 },
-    { name: "Medium att.",   A: reportA.n_vulns.active.medium ?? 0,   B: reportB.n_vulns.active.medium ?? 0 },
-    { name: "High pass.",    A: reportA.n_vulns.passive.high ?? 0,    B: reportB.n_vulns.passive.high ?? 0 },
-    { name: "Medium pass.",  A: reportA.n_vulns.passive.medium ?? 0,  B: reportB.n_vulns.passive.medium ?? 0 },
+    { name: t.cmp.vulnCritAct, A: reportA.n_vulns.active.critical ?? 0, B: reportB.n_vulns.active.critical ?? 0 },
+    { name: t.cmp.vulnHighAct, A: reportA.n_vulns.active.high ?? 0,     B: reportB.n_vulns.active.high ?? 0 },
+    { name: t.cmp.vulnMedAct,  A: reportA.n_vulns.active.medium ?? 0,   B: reportB.n_vulns.active.medium ?? 0 },
+    { name: t.cmp.vulnHighPass,A: reportA.n_vulns.passive.high ?? 0,    B: reportB.n_vulns.passive.high ?? 0 },
+    { name: t.cmp.vulnMedPass, A: reportA.n_vulns.passive.medium ?? 0,  B: reportB.n_vulns.passive.medium ?? 0 },
   ] : [];
 
   return (
@@ -394,9 +395,9 @@ export default function ComparePage() {
       <Card className="shadow-none dark:ring-0">
         <CardContent className="pt-4 pb-4">
           <div className="grid gap-4 sm:grid-cols-[1fr_auto_1fr]">
-            <VersionSelect items={history} value={resolvedA} onChange={setA} label="A — Attuale (corrente)" color={CLR_A} exclude={resolvedB} />
-            <div className="flex items-end justify-center pb-1.5 text-lg font-light text-muted-foreground">vs</div>
-            <VersionSelect items={history} value={resolvedB} onChange={setB} label="B — Precedente (base)" color={CLR_B} exclude={resolvedA} />
+            <VersionSelect items={history} value={resolvedA} onChange={setA} label={t.cmp.labelA} color={CLR_A} exclude={resolvedB} />
+            <div className="flex items-end justify-center pb-1.5 text-lg font-light text-muted-foreground">{t.cmp.vs}</div>
+            <VersionSelect items={history} value={resolvedB} onChange={setB} label={t.cmp.labelB} color={CLR_B} exclude={resolvedA} />
           </div>
         </CardContent>
       </Card>
@@ -404,14 +405,14 @@ export default function ComparePage() {
       {/* Loading */}
       {isLoading && (
         <div className="rounded-lg border p-10 text-center text-sm text-muted-foreground animate-pulse">
-          Caricamento dati…
+          {t.cmp.loading}
         </div>
       )}
 
       {!isLoading && reportA && reportB && (() => {
         const riskA = getRiskInfo(reportA.risk_score);
         const riskB = getRiskInfo(reportB.risk_score);
-        const scoreDiff = reportA.risk_score - reportB.risk_score; // A = attuale, B = precedente
+        const scoreDiff = reportA.risk_score - reportB.risk_score;
         const scoreImproved = scoreDiff < 0;
 
         return (
@@ -420,7 +421,7 @@ export default function ComparePage() {
             <div className="grid grid-cols-[1fr_auto_1fr] items-center gap-4">
               <Card className="shadow-none dark:ring-0" style={{ borderColor: CLR_A + "66" }}>
                 <CardContent className="flex flex-col items-center gap-1 py-6">
-                  <span className="text-[10px] font-bold uppercase tracking-widest" style={{ color: CLR_A }}>A — Attuale · {formatDate(reportA.creation_date)}</span>
+                  <span className="text-[10px] font-bold uppercase tracking-widest" style={{ color: CLR_A }}>{t.cmp.tagA} · {formatDate(reportA.creation_date)}</span>
                   <span className={cn("text-6xl font-black tabular-nums", riskA.textClass)}>{reportA.risk_score}</span>
                   <span className={cn("rounded-full px-3 py-0.5 text-xs font-bold", riskA.badgeClass)}>{riskA.label}</span>
                 </CardContent>
@@ -431,12 +432,12 @@ export default function ComparePage() {
                   {scoreDiff > 0 ? "+" : ""}{scoreDiff}
                 </span>
                 <span className="text-[10px] text-muted-foreground text-center">
-                  {scoreImproved ? "migliorato" : scoreDiff > 0 ? "peggiorato" : "invariato"}
+                  {scoreImproved ? t.cmp.improved : scoreDiff > 0 ? t.cmp.worsened : t.cmp.unchanged}
                 </span>
               </div>
               <Card className="shadow-none dark:ring-0" style={{ borderColor: CLR_B + "66" }}>
                 <CardContent className="flex flex-col items-center gap-1 py-6">
-                  <span className="text-[10px] font-bold uppercase tracking-widest" style={{ color: CLR_B }}>B — Precedente · {formatDate(reportB.creation_date)}</span>
+                  <span className="text-[10px] font-bold uppercase tracking-widest" style={{ color: CLR_B }}>{t.cmp.tagB} · {formatDate(reportB.creation_date)}</span>
                   <span className={cn("text-6xl font-black tabular-nums", riskB.textClass)}>{reportB.risk_score}</span>
                   <span className={cn("rounded-full px-3 py-0.5 text-xs font-bold", riskB.badgeClass)}>{riskB.label}</span>
                 </CardContent>
@@ -448,7 +449,7 @@ export default function ComparePage() {
               <Card className="shadow-none dark:ring-0">
                 <CardHeader className="pb-0">
                   <CardTitle className="text-xs font-semibold uppercase tracking-wide text-muted-foreground">
-                    Punteggi di Rischio — Confronto Radar
+                    {t.cmp.radarTitle}
                   </CardTitle>
                 </CardHeader>
                 <CardContent className="pt-2">
@@ -479,7 +480,7 @@ export default function ComparePage() {
             <Card className="shadow-none dark:ring-0">
               <CardHeader className="pb-0">
                 <CardTitle className="text-xs font-semibold uppercase tracking-wide text-muted-foreground">
-                  Vulnerabilità — Distribuzione
+                  {t.cmp.vulnTitle}
                 </CardTitle>
               </CardHeader>
               <CardContent className="pt-2">
@@ -505,15 +506,15 @@ export default function ComparePage() {
 
             {/* ── Metric compare cards ── */}
             <div>
-              <p className="mb-3 text-xs font-semibold uppercase tracking-wide text-muted-foreground">Metriche Chiave</p>
+              <p className="mb-3 text-xs font-semibold uppercase tracking-wide text-muted-foreground">{t.cmp.metricsTitle}</p>
               <div className="grid gap-3 grid-cols-2 sm:grid-cols-3 lg:grid-cols-4">
-                <CmpCard label="Vulnerabilità Totali"   a={totalVulns(reportA)}   b={totalVulns(reportB)}   higherIsBad />
-                <CmpCard label="Data Leak Totali"       a={totalLeaks(reportA)}   b={totalLeaks(reportB)}   higherIsBad />
-                <CmpCard label="Potential Stealer"      a={reportA.n_dataleak.total.potential_stealer} b={reportB.n_dataleak.total.potential_stealer} higherIsBad />
-                <CmpCard label="Certificati Scaduti"    a={reportA.n_cert_scaduti} b={reportB.n_cert_scaduti} higherIsBad />
-                <CmpCard label="Certificati Attivi"     a={reportA.n_cert_attivi}  b={reportB.n_cert_attivi}  higherIsBad={false} />
-                <CmpCard label="Asset"                  a={reportA.n_asset}        b={reportB.n_asset}        higherIsBad={false} />
-                <CmpCard label="IP univoci IPv4"         a={reportA.unique_ipv4}   b={reportB.unique_ipv4}   higherIsBad={false} />
+                <CmpCard label={t.cmp.mVulnTotal}   a={totalVulns(reportA)}   b={totalVulns(reportB)}   higherIsBad />
+                <CmpCard label={t.cmp.mLeakTotal}    a={totalLeaks(reportA)}   b={totalLeaks(reportB)}   higherIsBad />
+                <CmpCard label={t.cmp.mPotStealer}   a={reportA.n_dataleak.total.potential_stealer} b={reportB.n_dataleak.total.potential_stealer} higherIsBad />
+                <CmpCard label={t.cmp.mCertExp}      a={reportA.n_cert_scaduti} b={reportB.n_cert_scaduti} higherIsBad />
+                <CmpCard label={t.cmp.mCertAct}      a={reportA.n_cert_attivi}  b={reportB.n_cert_attivi}  higherIsBad={false} />
+                <CmpCard label={t.cmp.mAsset}         a={reportA.n_asset}        b={reportB.n_asset}        higherIsBad={false} />
+                <CmpCard label={t.cmp.mIpv4}          a={reportA.unique_ipv4}   b={reportB.unique_ipv4}   higherIsBad={false} />
               </div>
             </div>
 
@@ -526,6 +527,7 @@ export default function ComparePage() {
 
 // ── breadcrumb ─────────────────────────────────────────────────────────────
 function Breadcrumb({ domain }: { domain: string }) {
+  const t = useT();
   return (
     <div className="flex flex-wrap items-center gap-3">
       <Link to={`/report/${encodeURIComponent(domain)}`} className="flex items-center gap-1.5 text-sm text-muted-foreground hover:text-foreground transition-colors">
@@ -535,7 +537,7 @@ function Breadcrumb({ domain }: { domain: string }) {
       <Globe className="size-4 text-muted-foreground" />
       <span className="font-semibold">{domain}</span>
       <span className="text-muted-foreground">/</span>
-      <span className="text-sm font-medium">Confronta scansioni</span>
+      <span className="text-sm font-medium">{t.cmp.title}</span>
     </div>
   );
 }

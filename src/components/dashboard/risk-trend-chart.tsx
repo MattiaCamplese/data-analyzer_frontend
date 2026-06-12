@@ -5,6 +5,7 @@ import { TrendingUp, TrendingDown, Minus } from "lucide-react";
 import { cn } from "@/lib/utils";
 import { getRiskInfo } from "@/lib/risk-utils";
 import type { SecurityReport } from "@/types/report";
+import { useT } from "@/hooks/use-t";
 
 interface DayPoint {
   date: string;
@@ -15,31 +16,26 @@ interface DayPoint {
 function generateMockHistory(currentAvg: number): DayPoint[] {
   const today = new Date();
   const points: DayPoint[] = [];
-  // Walk backwards 29 days generating a realistic random walk
   let score = Math.min(100, Math.max(0, currentAvg + (Math.random() > 0.5 ? 8 : -8)));
   for (let i = 29; i >= 0; i--) {
     const d = new Date(today);
     d.setDate(today.getDate() - i);
     const label = d.toLocaleDateString("it-IT", { day: "2-digit", month: "short" });
     const date = d.toISOString().split("T")[0];
-    // random walk clamped to [0,100]
     const delta = (Math.random() - 0.48) * 6;
     score = Math.min(100, Math.max(0, score + delta));
-    // last point is always the real current average
     if (i === 0) score = currentAvg;
     points.push({ date, label, score: Math.round(score) });
   }
   return points;
 }
 
-// Stable mock data seeded from currentAvg (regenerates only when avg changes)
 function useRiskHistory(reports: SecurityReport[]): DayPoint[] {
   const currentAvg = reports.length
     ? Math.round(reports.reduce((s, r) => s + r.risk_score, 0) / reports.length)
     : 50;
 
   return useMemo(() => {
-    // Build from real report dates first, fill gaps with simulated data
     const byDate: Record<string, number[]> = {};
     for (const r of reports) {
       const d = r.creation_date?.split("T")[0] ?? "";
@@ -51,7 +47,6 @@ function useRiskHistory(reports: SecurityReport[]): DayPoint[] {
       label: new Date(date).toLocaleDateString("it-IT", { day: "2-digit", month: "short" }),
     }));
 
-    // If we have fewer than 7 real days, fill with mock history
     if (realPoints.length < 7) return generateMockHistory(currentAvg);
 
     return realPoints.sort((a, b) => a.date.localeCompare(b.date)).slice(-30);
@@ -91,6 +86,7 @@ interface Props {
 }
 
 export function RiskTrendChart({ reports }: Props) {
+  const t = useT();
   const data = useRiskHistory(reports);
   const last = data[data.length - 1]?.score ?? 0;
   const prev = data[data.length - 2]?.score ?? last;
@@ -102,7 +98,6 @@ export function RiskTrendChart({ reports }: Props) {
 
   const strokeColor = gradientStop(last);
 
-  // Show only every 5th label to avoid crowding
   const tickFormatter = (_: string, index: number) =>
     index % 5 === 0 ? data[index]?.label ?? "" : "";
 
@@ -111,7 +106,7 @@ export function RiskTrendChart({ reports }: Props) {
       <CardHeader className="pb-2">
         <div className="flex items-center justify-between">
           <CardTitle className="text-xs font-medium text-muted-foreground uppercase tracking-wide">
-            Risk Score Globale — ultimi 30 giorni
+            {t.trend.title}
           </CardTitle>
           <div className="flex items-center gap-1.5">
             <TrendIcon className={cn("size-3.5", trendColor)} />
@@ -164,7 +159,7 @@ export function RiskTrendChart({ reports }: Props) {
           </ResponsiveContainer>
         </div>
         <div className="mt-2 flex items-center justify-between text-xs text-muted-foreground">
-          <span>Score attuale: <span className={cn("font-semibold", risk.textClass)}>{last}</span></span>
+          <span>{t.trend.current} <span className={cn("font-semibold", risk.textClass)}>{last}</span></span>
           <span className={cn("text-[10px] font-medium", risk.textClass)}>{risk.label}</span>
         </div>
       </CardContent>
