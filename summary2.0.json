@@ -1,0 +1,620 @@
+{
+  "status": "success",
+  "results": [
+    {
+      "idsummary": "d1923479-e084-4ade-b18c-0c2262b8fb6a",
+      "summary_text": "**Riepilogo Esecutivo della Vulnerabilità per \"cybersonar.demo\"**\n\nIl dominio \"cybersonar.demo\" attualmente presenta una situazione di sicurezza altamente critica, con un punteggio di rischio di 99 su 100, indicando una situazione estremamente pericolosa con multiple vulnerabilità severe, fuga di dati significativa e/o eccessiva esposizione dei servizi. E' richiesta un'azione immediata.\n\n**Vulnerabilità:**\n- Totale vulnerabilità rilevate: 162, con 2 vulnerabilità critiche attive, 18 vulnerabilità passive di alto livello, e una distribuzione varia di vulnerabilità di medio livello (52 totali, di cui 3 attive), e 90 vulnerabilità informative. Non sono state individuate vulnerabilità di basso livello.\n\n**Esposizione dei Servizi:**\n- E' stata identificata un\"esposizione significativa ai servizi attraverso 102 asset totali con 30 indirizzi IPv4 e 23 IPv6 unici. Le porte più esposte comprendono la porta 80 (68 istanze), 443 (42 istanze), nonchè le porte 8800, 53, 6697, 6667, e 8080 con un numero variabile di esposizioni.\n\n**Fuga di Dati:**\n- Le fughe di dati sono sostanziali, con 1 fuga di dati relativa al \"domain_stealer\" non risolta, 826 fughe di dati potenzialmente pericolose (potential_stealer) e 11 altre fughe di dati (other_stealer). Non ci sono fughe di dati VIP o generali rilevate.\n\n**Certificati e Tecnologia:**\n- Sono state riscontrate problematiche relative ai certificati con 15 certificati attivi e 18 scaduti. Questa situazione può comportare rischi aggiuntivi per la sicurezza delle comunicazioni.\n- L'implementazione tecnologica prevede misure di sicurezza quali Web Application Firewall (WAF) su 4 asset, ma nessun Content Delivery Network (CDN) è in uso, aumentando l'esposizione agli attacchi DDoS e ad altre minacce internet.\n\n**Sicurezza Email:**\n- La sicurezza email è vulnerabile allo spoofing, nonostante la politica DMARC sia impostata su \"quarantena\". Non sono state rilevate presenze in blacklist.\n\nLa combinazione delle vulnerabilità critiche, l\"ampio numero di potential_stealer, e l'eccessiva esposizione dei servizi porta ad una situazione di estrema urgenza. Sono necessarie azioni immediate per mitigare i rischi, risolvere le vulnerabilità e migliorare la sicurezza generale del dominio \"cybersonar.demo\".",
+      "summary_text_en": "**Executive Summary of Vulnerability for \"cybersonar.demo\"**\n\nThe domain \"cybersonar.demo\" currently has a highly critical security situation, with a risk score of 99 out of 100, indicating an extremely dangerous situation with multiple severe vulnerabilities, significant data leakage, and/or excessive exposure of services. Immediate action is required.\n\n**Vulnerability:**\n- Total vulnerabilities detected: 162, with 2 active critical vulnerabilities, 18 high-level passive vulnerabilities, and a varied distribution of mid-level vulnerabilities (52 total, including 3 active), and 90 informational vulnerabilities. No low-level vulnerabilities were detected.\n\n**Exposure of Services:**\n- Significant exposure to services was identified across 102 total assets with 30 unique IPv4 and 23 IPv6 addresses. The most exposed ports include port 80 (68 instances), 443 (42 instances), as well as ports 8800, 53, 6697, 6667, and 8080 with varying numbers of exposures.\n\n**Data Leakage:**\n- Data leaks are substantial, with 1 data leak related to \"domain_stealer\" unresolved, 826 potentially dangerous data leaks (potential_stealer), and 11 other data leaks (other_stealer). There are no VIP or general data leaks detected.\n\n**Certificates and Technology:**\n- Certificate issues were found with 15 active and 18 expired certificates. This situation may pose additional risks to communication security.\n- Technology implementation includes security measures such as Web Application Firewall (WAF) on 4 assets, but no Content Delivery Network (CDN) is in use, increasing exposure to DDoS attacks and other Internet threats.\n\n**Email Security:**\n- Email security is vulnerable to spoofing, despite DMARC policy being set to \"quarantine.\" No blacklisting has been detected.\n\nThe combination of critical vulnerabilities, the large number of potential_stealers, and excessive exposure of services leads to an extremely urgent situation. Immediate actions are needed to mitigate risks, resolve vulnerabilities, and improve the overall security of the \"cybersonar.demo\" domain.",
+      "risk_score": "99",
+      "creation_date": "2024-03-07 18:08:41",
+      "last_edit": "2024-03-08 14:09:44",
+      "domain_name": "cybersonar.demo",
+      "servizi_esposti_score": 99,
+      "dataleak_score": 100,
+      "rapporto_leak_email_score": 50,
+      "spoofing_score": 50,
+      "open_ports_score": 1,
+      "blacklist_score": 70,
+      "vulnerability_score_active": 54,
+      "vulnerability_score_passive": 99,
+      "certificate_score": 61,
+      "n_port": {
+        "53": {
+          "n": 3
+        },
+        "80": {
+          "n": 68
+        },
+        "443": {
+          "n": 42
+        },
+        "6667": {
+          "n": 9
+        },
+        "6697": {
+          "n": 9
+        },
+        "8080": {
+          "n": 6
+        },
+        "8800": {
+          "n": 21
+        }
+      },
+      "n_cert_attivi": 15,
+      "n_cert_scaduti": 18,
+      "n_asset": 102,
+      "n_similar_domains": 13,
+      "email_security": {
+        "spoofable": "Spoofing possible.",
+        "dmarc_policy": "quarantine",
+        "blacklist_detections": 0,
+        "blacklist_total_list": 60,
+        "blacklist_detected_list": []
+      },
+      "n_dataleak": {
+        "total": {
+          "vip": 0,
+          "domain_stealer": 1,
+          "potential_stealer": 826,
+          "other_stealer": 11,
+          "general_leak": 0
+        },
+        "resolved": {
+          "vip": 0,
+          "domain_stealer": 0,
+          "potential_stealer": 0,
+          "other_stealer": 0,
+          "general_leak": 0
+        },
+        "unresolved": {
+          "vip": 0,
+          "domain_stealer": 1,
+          "potential_stealer": 826,
+          "other_stealer": 11,
+          "general_leak": 0
+        },
+        "enumeration": 2
+      },
+      "n_vulns": {
+        "total": {
+          "critical": 2,
+          "high": 18,
+          "medium": 52,
+          "low": 0,
+          "info": 90
+        },
+        "active": {
+          "critical": 2,
+          "high": 0,
+          "medium": 3,
+          "low": 0,
+          "info": 90
+        },
+        "passive": {
+          "critical": 0,
+          "high": 18,
+          "medium": 49,
+          "low": 0,
+          "info": 0
+        }
+      },
+      "waf": {
+        "count": 4,
+        "assets": [
+          "128f92aa-85c1-486f-acbf-c1b43e8b33ba",
+          "ec87e3bd-3de2-477c-b52b-b93a70814ed0",
+          "b909c3b2-56e6-40e5-98c1-814fa0b85bb7",
+          "175e40e8-33af-4db3-9617-a3be04103d6f"
+        ]
+      },
+      "cdn": {
+        "count": 0,
+        "assets": []
+      },
+      "unique_ipv4": 30,
+      "unique_ipv6": 23
+    },
+    {
+      "idsummary": "a3f812bc-14d7-4e2a-9c61-7f3a5d8e1234",
+      "summary_text": "**Riepilogo Esecutivo della Vulnerabilità per \"globalbank.demo\"**\n\nIl dominio \"globalbank.demo\" presenta una situazione di sicurezza critica con un punteggio di rischio di 95 su 100. Sono state rilevate credenziali bancarie in leak e accessi admin esposti pubblicamente.\n\n**Vulnerabilità:**\n- Totale vulnerabilità: 134, con 5 critiche attive, 24 alte passive, 38 medie e 67 informative.\n\n**Esposizione dei Servizi:**\n- 87 asset totali, 22 IPv4 e 15 IPv6 unici. Porte esposte: 443 (55), 80 (40), 8443 (12), 3306 (2).\n\n**Fuga di Dati:**\n- 3 domain_stealer irrisolti, 1.243 potential_stealer, 45 other_stealer.\n\n**Certificati e Tecnologia:**\n- 8 certificati attivi, 22 scaduti. WAF su 2 asset, nessun CDN.\n\n**Sicurezza Email:**\n- Spoofing possibile, DMARC assente. Nessuna blacklist rilevata.",
+      "summary_text_en": "**Executive Summary of Vulnerability for \"globalbank.demo\"**\n\nThe domain \"globalbank.demo\" presents a critical security situation with a risk score of 95 out of 100. Banking credentials in leaks and publicly exposed admin accesses have been detected.\n\n**Vulnerabilities:**\n- Total vulnerabilities: 134, with 5 active critical, 24 passive high, 38 medium and 67 informational.\n\n**Service Exposure:**\n- 87 total assets, 22 unique IPv4 and 15 IPv6. Exposed ports: 443 (55), 80 (40), 8443 (12), 3306 (2).\n\n**Data Leakage:**\n- 3 unresolved domain_stealers, 1,243 potential_stealers, 45 other_stealers.\n\n**Certificates and Technology:**\n- 8 active certificates, 22 expired. WAF on 2 assets, no CDN.\n\n**Email Security:**\n- Spoofing possible, DMARC absent. No blacklist detected.",
+      "risk_score": "95",
+      "creation_date": "2024-04-12 09:21:33",
+      "last_edit": "2024-04-13 11:45:00",
+      "domain_name": "globalbank.demo",
+      "servizi_esposti_score": 91,
+      "dataleak_score": 100,
+      "rapporto_leak_email_score": 80,
+      "spoofing_score": 100,
+      "open_ports_score": 30,
+      "blacklist_score": 0,
+      "vulnerability_score_active": 85,
+      "vulnerability_score_passive": 90,
+      "certificate_score": 75,
+      "n_port": {
+        "80": { "n": 40 },
+        "443": { "n": 55 },
+        "3306": { "n": 2 },
+        "8443": { "n": 12 }
+      },
+      "n_cert_attivi": 8,
+      "n_cert_scaduti": 22,
+      "n_asset": 87,
+      "n_similar_domains": 9,
+      "email_security": {
+        "spoofable": "Spoofing possible.",
+        "dmarc_policy": "none",
+        "blacklist_detections": 0,
+        "blacklist_total_list": 60,
+        "blacklist_detected_list": []
+      },
+      "n_dataleak": {
+        "total": { "vip": 2, "domain_stealer": 3, "potential_stealer": 1243, "other_stealer": 45, "general_leak": 0 },
+        "resolved": { "vip": 0, "domain_stealer": 0, "potential_stealer": 0, "other_stealer": 0, "general_leak": 0 },
+        "unresolved": { "vip": 2, "domain_stealer": 3, "potential_stealer": 1243, "other_stealer": 45, "general_leak": 0 },
+        "enumeration": 5
+      },
+      "n_vulns": {
+        "total": { "critical": 5, "high": 24, "medium": 38, "low": 0, "info": 67 },
+        "active": { "critical": 5, "high": 2, "medium": 8, "low": 0, "info": 67 },
+        "passive": { "critical": 0, "high": 22, "medium": 30, "low": 0, "info": 0 }
+      },
+      "waf": { "count": 2, "assets": ["aabb1122-0001-0001-0001-aabbccdd0001", "aabb1122-0001-0001-0001-aabbccdd0002"] },
+      "cdn": { "count": 0, "assets": [] },
+      "unique_ipv4": 22,
+      "unique_ipv6": 15
+    },
+    {
+      "idsummary": "b7c345de-22e8-4f3b-ad72-8e4b6c9f5678",
+      "summary_text": "**Riepilogo Esecutivo della Vulnerabilità per \"medicalrecords.demo\"**\n\nIl dominio \"medicalrecords.demo\" mostra un punteggio di rischio di 82 su 100. Sono stati identificati dati sanitari potenzialmente esposti e pannelli di amministrazione accessibili senza autenticazione.\n\n**Vulnerabilità:**\n- 98 vulnerabilità totali: 3 critiche, 15 alte, 31 medie, 4 basse, 45 informative.\n\n**Esposizione dei Servizi:**\n- 64 asset, 18 IPv4 e 10 IPv6 unici. Porte: 80 (35), 443 (28), 8080 (8), 22 (4).\n\n**Fuga di Dati:**\n- 0 domain_stealer, 412 potential_stealer, 8 other_stealer.\n\n**Certificati e Tecnologia:**\n- 11 certificati attivi, 6 scaduti. Nessun WAF, nessun CDN.\n\n**Sicurezza Email:**\n- DMARC impostato su \"none\", spoofing possibile.",
+      "summary_text_en": "**Executive Summary of Vulnerability for \"medicalrecords.demo\"**\n\nThe domain \"medicalrecords.demo\" shows a risk score of 82 out of 100. Potentially exposed health data and administration panels accessible without authentication have been identified.\n\n**Vulnerabilities:**\n- 98 total vulnerabilities: 3 critical, 15 high, 31 medium, 4 low, 45 informational.\n\n**Service Exposure:**\n- 64 assets, 18 unique IPv4 and 10 IPv6. Ports: 80 (35), 443 (28), 8080 (8), 22 (4).\n\n**Data Leakage:**\n- 0 domain_stealers, 412 potential_stealers, 8 other_stealers.\n\n**Certificates and Technology:**\n- 11 active certificates, 6 expired. No WAF, no CDN.\n\n**Email Security:**\n- DMARC set to \"none\", spoofing possible.",
+      "risk_score": "82",
+      "creation_date": "2024-05-03 14:33:12",
+      "last_edit": "2024-05-04 09:10:55",
+      "domain_name": "medicalrecords.demo",
+      "servizi_esposti_score": 78,
+      "dataleak_score": 85,
+      "rapporto_leak_email_score": 60,
+      "spoofing_score": 100,
+      "open_ports_score": 40,
+      "blacklist_score": 0,
+      "vulnerability_score_active": 70,
+      "vulnerability_score_passive": 75,
+      "certificate_score": 40,
+      "n_port": {
+        "22": { "n": 4 },
+        "80": { "n": 35 },
+        "443": { "n": 28 },
+        "8080": { "n": 8 }
+      },
+      "n_cert_attivi": 11,
+      "n_cert_scaduti": 6,
+      "n_asset": 64,
+      "n_similar_domains": 5,
+      "email_security": {
+        "spoofable": "Spoofing possible.",
+        "dmarc_policy": "none",
+        "blacklist_detections": 0,
+        "blacklist_total_list": 60,
+        "blacklist_detected_list": []
+      },
+      "n_dataleak": {
+        "total": { "vip": 0, "domain_stealer": 0, "potential_stealer": 412, "other_stealer": 8, "general_leak": 3 },
+        "resolved": { "vip": 0, "domain_stealer": 0, "potential_stealer": 50, "other_stealer": 2, "general_leak": 1 },
+        "unresolved": { "vip": 0, "domain_stealer": 0, "potential_stealer": 362, "other_stealer": 6, "general_leak": 2 },
+        "enumeration": 3
+      },
+      "n_vulns": {
+        "total": { "critical": 3, "high": 15, "medium": 31, "low": 4, "info": 45 },
+        "active": { "critical": 3, "high": 1, "medium": 6, "low": 2, "info": 45 },
+        "passive": { "critical": 0, "high": 14, "medium": 25, "low": 2, "info": 0 }
+      },
+      "waf": { "count": 0, "assets": [] },
+      "cdn": { "count": 0, "assets": [] },
+      "unique_ipv4": 18,
+      "unique_ipv6": 10
+    },
+    {
+      "idsummary": "c9d456ef-33f9-4a4c-be83-9f5c7d0a6789",
+      "summary_text": "**Riepilogo Esecutivo della Vulnerabilità per \"govportal.demo\"**\n\nIl dominio \"govportal.demo\" presenta un punteggio di rischio di 91 su 100. Servizi critici esposti su porte non standard e credenziali di accesso trovate in database di leak pubblici.\n\n**Vulnerabilità:**\n- 145 vulnerabilità totali: 4 critiche, 20 alte, 44 medie, 2 basse, 75 informative.\n\n**Esposizione dei Servizi:**\n- 93 asset, 28 IPv4 e 19 IPv6. Porte: 80 (52), 443 (48), 8080 (15), 22 (9), 21 (3).\n\n**Fuga di Dati:**\n- 2 domain_stealer, 678 potential_stealer, 22 other_stealer.\n\n**Certificati e Tecnologia:**\n- 19 certificati attivi, 14 scaduti. WAF su 3 asset, CDN su 5 asset.\n\n**Sicurezza Email:**\n- DMARC su \"quarantine\", 3 rilevamenti in blacklist.",
+      "summary_text_en": "**Executive Summary of Vulnerability for \"govportal.demo\"**\n\nThe domain \"govportal.demo\" has a risk score of 91 out of 100. Critical services exposed on non-standard ports and access credentials found in public leak databases.\n\n**Vulnerabilities:**\n- 145 total vulnerabilities: 4 critical, 20 high, 44 medium, 2 low, 75 informational.\n\n**Service Exposure:**\n- 93 assets, 28 IPv4 and 19 IPv6. Ports: 80 (52), 443 (48), 8080 (15), 22 (9), 21 (3).\n\n**Data Leakage:**\n- 2 domain_stealers, 678 potential_stealers, 22 other_stealers.\n\n**Certificates and Technology:**\n- 19 active certificates, 14 expired. WAF on 3 assets, CDN on 5 assets.\n\n**Email Security:**\n- DMARC on \"quarantine\", 3 blacklist detections.",
+      "risk_score": "91",
+      "creation_date": "2024-06-18 10:05:44",
+      "last_edit": "2024-06-19 16:30:21",
+      "domain_name": "govportal.demo",
+      "servizi_esposti_score": 88,
+      "dataleak_score": 95,
+      "rapporto_leak_email_score": 70,
+      "spoofing_score": 50,
+      "open_ports_score": 20,
+      "blacklist_score": 60,
+      "vulnerability_score_active": 80,
+      "vulnerability_score_passive": 85,
+      "certificate_score": 55,
+      "n_port": {
+        "21": { "n": 3 },
+        "22": { "n": 9 },
+        "80": { "n": 52 },
+        "443": { "n": 48 },
+        "8080": { "n": 15 }
+      },
+      "n_cert_attivi": 19,
+      "n_cert_scaduti": 14,
+      "n_asset": 93,
+      "n_similar_domains": 11,
+      "email_security": {
+        "spoofable": "Spoofing possible.",
+        "dmarc_policy": "quarantine",
+        "blacklist_detections": 3,
+        "blacklist_total_list": 60,
+        "blacklist_detected_list": ["spamhaus", "sorbs", "uceprotect"]
+      },
+      "n_dataleak": {
+        "total": { "vip": 1, "domain_stealer": 2, "potential_stealer": 678, "other_stealer": 22, "general_leak": 5 },
+        "resolved": { "vip": 0, "domain_stealer": 0, "potential_stealer": 100, "other_stealer": 5, "general_leak": 2 },
+        "unresolved": { "vip": 1, "domain_stealer": 2, "potential_stealer": 578, "other_stealer": 17, "general_leak": 3 },
+        "enumeration": 4
+      },
+      "n_vulns": {
+        "total": { "critical": 4, "high": 20, "medium": 44, "low": 2, "info": 75 },
+        "active": { "critical": 4, "high": 3, "medium": 10, "low": 1, "info": 75 },
+        "passive": { "critical": 0, "high": 17, "medium": 34, "low": 1, "info": 0 }
+      },
+      "waf": { "count": 3, "assets": ["ccdd3344-0001-0001-0001-aabbccdd0001", "ccdd3344-0001-0001-0001-aabbccdd0002", "ccdd3344-0001-0001-0001-aabbccdd0003"] },
+      "cdn": { "count": 5, "assets": ["ccdd3344-0002-0001-0001-aabbccdd0001", "ccdd3344-0002-0001-0001-aabbccdd0002", "ccdd3344-0002-0001-0001-aabbccdd0003", "ccdd3344-0002-0001-0001-aabbccdd0004", "ccdd3344-0002-0001-0001-aabbccdd0005"] },
+      "unique_ipv4": 28,
+      "unique_ipv6": 19
+    },
+    {
+      "idsummary": "d0e567fa-44ab-4b5d-cf94-0a6d8e1b7890",
+      "summary_text": "**Riepilogo Esecutivo della Vulnerabilità per \"retailchain.demo\"**\n\nIl dominio \"retailchain.demo\" presenta un punteggio di rischio di 58 su 100. Situazione di rischio moderato con alcune vulnerabilità alte e fuga di dati contenuta.\n\n**Vulnerabilità:**\n- 67 vulnerabilità totali: 0 critiche, 8 alte, 22 medie, 10 basse, 27 informative.\n\n**Esposizione dei Servizi:**\n- 41 asset, 12 IPv4 e 6 IPv6. Porte: 80 (28), 443 (22), 8080 (5).\n\n**Fuga di Dati:**\n- 0 domain_stealer, 95 potential_stealer, 3 other_stealer.\n\n**Certificati e Tecnologia:**\n- 14 certificati attivi, 2 scaduti. WAF su 6 asset, CDN su 8 asset.\n\n**Sicurezza Email:**\n- DMARC su \"reject\", nessuno spoofing possibile.",
+      "summary_text_en": "**Executive Summary of Vulnerability for \"retailchain.demo\"**\n\nThe domain \"retailchain.demo\" has a risk score of 58 out of 100. Moderate risk situation with some high vulnerabilities and contained data leakage.\n\n**Vulnerabilities:**\n- 67 total vulnerabilities: 0 critical, 8 high, 22 medium, 10 low, 27 informational.\n\n**Service Exposure:**\n- 41 assets, 12 unique IPv4 and 6 IPv6. Ports: 80 (28), 443 (22), 8080 (5).\n\n**Data Leakage:**\n- 0 domain_stealers, 95 potential_stealers, 3 other_stealers.\n\n**Certificates and Technology:**\n- 14 active certificates, 2 expired. WAF on 6 assets, CDN on 8 assets.\n\n**Email Security:**\n- DMARC on \"reject\", no spoofing possible.",
+      "risk_score": "58",
+      "creation_date": "2024-07-22 08:44:17",
+      "last_edit": "2024-07-22 15:20:33",
+      "domain_name": "retailchain.demo",
+      "servizi_esposti_score": 50,
+      "dataleak_score": 55,
+      "rapporto_leak_email_score": 30,
+      "spoofing_score": 0,
+      "open_ports_score": 60,
+      "blacklist_score": 0,
+      "vulnerability_score_active": 40,
+      "vulnerability_score_passive": 55,
+      "certificate_score": 15,
+      "n_port": {
+        "80": { "n": 28 },
+        "443": { "n": 22 },
+        "8080": { "n": 5 }
+      },
+      "n_cert_attivi": 14,
+      "n_cert_scaduti": 2,
+      "n_asset": 41,
+      "n_similar_domains": 4,
+      "email_security": {
+        "spoofable": "Spoofing not possible.",
+        "dmarc_policy": "reject",
+        "blacklist_detections": 0,
+        "blacklist_total_list": 60,
+        "blacklist_detected_list": []
+      },
+      "n_dataleak": {
+        "total": { "vip": 0, "domain_stealer": 0, "potential_stealer": 95, "other_stealer": 3, "general_leak": 1 },
+        "resolved": { "vip": 0, "domain_stealer": 0, "potential_stealer": 40, "other_stealer": 1, "general_leak": 1 },
+        "unresolved": { "vip": 0, "domain_stealer": 0, "potential_stealer": 55, "other_stealer": 2, "general_leak": 0 },
+        "enumeration": 1
+      },
+      "n_vulns": {
+        "total": { "critical": 0, "high": 8, "medium": 22, "low": 10, "info": 27 },
+        "active": { "critical": 0, "high": 1, "medium": 4, "low": 3, "info": 27 },
+        "passive": { "critical": 0, "high": 7, "medium": 18, "low": 7, "info": 0 }
+      },
+      "waf": { "count": 6, "assets": ["eeff5566-0001-0001-0001-aabbccdd0001", "eeff5566-0001-0001-0001-aabbccdd0002", "eeff5566-0001-0001-0001-aabbccdd0003", "eeff5566-0001-0001-0001-aabbccdd0004", "eeff5566-0001-0001-0001-aabbccdd0005", "eeff5566-0001-0001-0001-aabbccdd0006"] },
+      "cdn": { "count": 8, "assets": ["eeff5566-0002-0001-0001-aabbccdd0001", "eeff5566-0002-0001-0001-aabbccdd0002", "eeff5566-0002-0001-0001-aabbccdd0003", "eeff5566-0002-0001-0001-aabbccdd0004", "eeff5566-0002-0001-0001-aabbccdd0005", "eeff5566-0002-0001-0001-aabbccdd0006", "eeff5566-0002-0001-0001-aabbccdd0007", "eeff5566-0002-0001-0001-aabbccdd0008"] },
+      "unique_ipv4": 12,
+      "unique_ipv6": 6
+    },
+    {
+      "idsummary": "e1f678ab-55bc-4c6e-d0a5-1b7e9f2c8901",
+      "summary_text": "**Riepilogo Esecutivo della Vulnerabilità per \"techstartup.demo\"**\n\nIl dominio \"techstartup.demo\" mostra un punteggio di rischio di 22 su 100. Situazione complessivamente buona con poche vulnerabilità minori e nessuna fuga di dati significativa.\n\n**Vulnerabilità:**\n- 18 vulnerabilità totali: 0 critiche, 0 alte, 5 medie, 3 basse, 10 informative.\n\n**Esposizione dei Servizi:**\n- 12 asset, 4 IPv4 e 2 IPv6. Porte: 443 (10), 80 (8).\n\n**Fuga di Dati:**\n- Nessuna fuga rilevante. 12 potential_stealer, 0 altre.\n\n**Certificati e Tecnologia:**\n- 5 certificati attivi, 0 scaduti. WAF su 4 asset, CDN su 4 asset.\n\n**Sicurezza Email:**\n- DMARC su \"reject\". Nessuna presenza in blacklist.",
+      "summary_text_en": "**Executive Summary of Vulnerability for \"techstartup.demo\"**\n\nThe domain \"techstartup.demo\" shows a risk score of 22 out of 100. Overall good situation with few minor vulnerabilities and no significant data leakage.\n\n**Vulnerabilities:**\n- 18 total vulnerabilities: 0 critical, 0 high, 5 medium, 3 low, 10 informational.\n\n**Service Exposure:**\n- 12 assets, 4 unique IPv4 and 2 IPv6. Ports: 443 (10), 80 (8).\n\n**Data Leakage:**\n- No significant leakage. 12 potential_stealers, 0 others.\n\n**Certificates and Technology:**\n- 5 active certificates, 0 expired. WAF on 4 assets, CDN on 4 assets.\n\n**Email Security:**\n- DMARC on \"reject\". No blacklist presence.",
+      "risk_score": "22",
+      "creation_date": "2024-08-05 11:15:09",
+      "last_edit": "2024-08-05 11:15:09",
+      "domain_name": "techstartup.demo",
+      "servizi_esposti_score": 20,
+      "dataleak_score": 15,
+      "rapporto_leak_email_score": 10,
+      "spoofing_score": 0,
+      "open_ports_score": 85,
+      "blacklist_score": 0,
+      "vulnerability_score_active": 20,
+      "vulnerability_score_passive": 25,
+      "certificate_score": 5,
+      "n_port": {
+        "80": { "n": 8 },
+        "443": { "n": 10 }
+      },
+      "n_cert_attivi": 5,
+      "n_cert_scaduti": 0,
+      "n_asset": 12,
+      "n_similar_domains": 2,
+      "email_security": {
+        "spoofable": "Spoofing not possible.",
+        "dmarc_policy": "reject",
+        "blacklist_detections": 0,
+        "blacklist_total_list": 60,
+        "blacklist_detected_list": []
+      },
+      "n_dataleak": {
+        "total": { "vip": 0, "domain_stealer": 0, "potential_stealer": 12, "other_stealer": 0, "general_leak": 0 },
+        "resolved": { "vip": 0, "domain_stealer": 0, "potential_stealer": 10, "other_stealer": 0, "general_leak": 0 },
+        "unresolved": { "vip": 0, "domain_stealer": 0, "potential_stealer": 2, "other_stealer": 0, "general_leak": 0 },
+        "enumeration": 0
+      },
+      "n_vulns": {
+        "total": { "critical": 0, "high": 0, "medium": 5, "low": 3, "info": 10 },
+        "active": { "critical": 0, "high": 0, "medium": 2, "low": 1, "info": 10 },
+        "passive": { "critical": 0, "high": 0, "medium": 3, "low": 2, "info": 0 }
+      },
+      "waf": { "count": 4, "assets": ["ffaa6677-0001-0001-0001-aabbccdd0001", "ffaa6677-0001-0001-0001-aabbccdd0002", "ffaa6677-0001-0001-0001-aabbccdd0003", "ffaa6677-0001-0001-0001-aabbccdd0004"] },
+      "cdn": { "count": 4, "assets": ["ffaa6677-0002-0001-0001-aabbccdd0001", "ffaa6677-0002-0001-0001-aabbccdd0002", "ffaa6677-0002-0001-0001-aabbccdd0003", "ffaa6677-0002-0001-0001-aabbccdd0004"] },
+      "unique_ipv4": 4,
+      "unique_ipv6": 2
+    },
+    {
+      "idsummary": "f2a789bc-66cd-4d7f-e1b6-2c8f0a3d9012",
+      "summary_text": "**Riepilogo Esecutivo della Vulnerabilità per \"insuranceco.demo\"**\n\nIl dominio \"insuranceco.demo\" presenta un punteggio di rischio di 67 su 100. Rischio elevato con certificati scaduti diffusi e moderata esposizione a data leak.\n\n**Vulnerabilità:**\n- 81 vulnerabilità totali: 1 critica, 12 alte, 28 medie, 8 basse, 32 informative.\n\n**Esposizione dei Servizi:**\n- 55 asset, 16 IPv4 e 8 IPv6. Porte: 80 (30), 443 (25), 8080 (6), 25 (2).\n\n**Fuga di Dati:**\n- 1 domain_stealer, 231 potential_stealer, 14 other_stealer.\n\n**Certificati e Tecnologia:**\n- 7 certificati attivi, 19 scaduti. WAF su 1 asset, nessun CDN.\n\n**Sicurezza Email:**\n- DMARC su \"quarantine\", 1 rilevamento in blacklist.",
+      "summary_text_en": "**Executive Summary of Vulnerability for \"insuranceco.demo\"**\n\nThe domain \"insuranceco.demo\" has a risk score of 67 out of 100. High risk with widespread expired certificates and moderate data leak exposure.\n\n**Vulnerabilities:**\n- 81 total vulnerabilities: 1 critical, 12 high, 28 medium, 8 low, 32 informational.\n\n**Service Exposure:**\n- 55 assets, 16 unique IPv4 and 8 IPv6. Ports: 80 (30), 443 (25), 8080 (6), 25 (2).\n\n**Data Leakage:**\n- 1 domain_stealer, 231 potential_stealers, 14 other_stealers.\n\n**Certificates and Technology:**\n- 7 active certificates, 19 expired. WAF on 1 asset, no CDN.\n\n**Email Security:**\n- DMARC on \"quarantine\", 1 blacklist detection.",
+      "risk_score": "67",
+      "creation_date": "2024-09-11 13:28:50",
+      "last_edit": "2024-09-12 10:00:00",
+      "domain_name": "insuranceco.demo",
+      "servizi_esposti_score": 62,
+      "dataleak_score": 70,
+      "rapporto_leak_email_score": 45,
+      "spoofing_score": 50,
+      "open_ports_score": 35,
+      "blacklist_score": 30,
+      "vulnerability_score_active": 55,
+      "vulnerability_score_passive": 65,
+      "certificate_score": 80,
+      "n_port": {
+        "25": { "n": 2 },
+        "80": { "n": 30 },
+        "443": { "n": 25 },
+        "8080": { "n": 6 }
+      },
+      "n_cert_attivi": 7,
+      "n_cert_scaduti": 19,
+      "n_asset": 55,
+      "n_similar_domains": 7,
+      "email_security": {
+        "spoofable": "Spoofing possible.",
+        "dmarc_policy": "quarantine",
+        "blacklist_detections": 1,
+        "blacklist_total_list": 60,
+        "blacklist_detected_list": ["spamhaus"]
+      },
+      "n_dataleak": {
+        "total": { "vip": 0, "domain_stealer": 1, "potential_stealer": 231, "other_stealer": 14, "general_leak": 2 },
+        "resolved": { "vip": 0, "domain_stealer": 0, "potential_stealer": 80, "other_stealer": 4, "general_leak": 1 },
+        "unresolved": { "vip": 0, "domain_stealer": 1, "potential_stealer": 151, "other_stealer": 10, "general_leak": 1 },
+        "enumeration": 2
+      },
+      "n_vulns": {
+        "total": { "critical": 1, "high": 12, "medium": 28, "low": 8, "info": 32 },
+        "active": { "critical": 1, "high": 1, "medium": 5, "low": 2, "info": 32 },
+        "passive": { "critical": 0, "high": 11, "medium": 23, "low": 6, "info": 0 }
+      },
+      "waf": { "count": 1, "assets": ["aabb7788-0001-0001-0001-aabbccdd0001"] },
+      "cdn": { "count": 0, "assets": [] },
+      "unique_ipv4": 16,
+      "unique_ipv6": 8
+    },
+    {
+      "idsummary": "03b890cd-77de-4e80-f2c7-3d9a1b4e0123",
+      "summary_text": "**Riepilogo Esecutivo della Vulnerabilità per \"university.demo\"**\n\nIl dominio \"university.demo\" presenta un punteggio di rischio di 48 su 100. Rischio moderato con infrastruttura ampia e diversi servizi legacy esposti.\n\n**Vulnerabilità:**\n- 112 vulnerabilità totali: 0 critiche, 9 alte, 35 medie, 20 basse, 48 informative.\n\n**Esposizione dei Servizi:**\n- 78 asset, 25 IPv4 e 12 IPv6. Porte: 80 (45), 443 (38), 22 (15), 21 (5), 3389 (2).\n\n**Fuga di Dati:**\n- 0 domain_stealer, 148 potential_stealer, 6 other_stealer.\n\n**Certificati e Tecnologia:**\n- 22 certificati attivi, 8 scaduti. WAF su 2 asset, CDN su 3 asset.\n\n**Sicurezza Email:**\n- DMARC su \"quarantine\". Nessuna blacklist.",
+      "summary_text_en": "**Executive Summary of Vulnerability for \"university.demo\"**\n\nThe domain \"university.demo\" has a risk score of 48 out of 100. Moderate risk with large infrastructure and several exposed legacy services.\n\n**Vulnerabilities:**\n- 112 total vulnerabilities: 0 critical, 9 high, 35 medium, 20 low, 48 informational.\n\n**Service Exposure:**\n- 78 assets, 25 unique IPv4 and 12 IPv6. Ports: 80 (45), 443 (38), 22 (15), 21 (5), 3389 (2).\n\n**Data Leakage:**\n- 0 domain_stealers, 148 potential_stealers, 6 other_stealers.\n\n**Certificates and Technology:**\n- 22 active certificates, 8 expired. WAF on 2 assets, CDN on 3 assets.\n\n**Email Security:**\n- DMARC on \"quarantine\". No blacklist.",
+      "risk_score": "48",
+      "creation_date": "2024-10-01 09:00:00",
+      "last_edit": "2024-10-02 12:00:00",
+      "domain_name": "university.demo",
+      "servizi_esposti_score": 55,
+      "dataleak_score": 40,
+      "rapporto_leak_email_score": 25,
+      "spoofing_score": 50,
+      "open_ports_score": 25,
+      "blacklist_score": 0,
+      "vulnerability_score_active": 30,
+      "vulnerability_score_passive": 45,
+      "certificate_score": 25,
+      "n_port": {
+        "21": { "n": 5 },
+        "22": { "n": 15 },
+        "80": { "n": 45 },
+        "443": { "n": 38 },
+        "3389": { "n": 2 }
+      },
+      "n_cert_attivi": 22,
+      "n_cert_scaduti": 8,
+      "n_asset": 78,
+      "n_similar_domains": 6,
+      "email_security": {
+        "spoofable": "Spoofing possible.",
+        "dmarc_policy": "quarantine",
+        "blacklist_detections": 0,
+        "blacklist_total_list": 60,
+        "blacklist_detected_list": []
+      },
+      "n_dataleak": {
+        "total": { "vip": 0, "domain_stealer": 0, "potential_stealer": 148, "other_stealer": 6, "general_leak": 4 },
+        "resolved": { "vip": 0, "domain_stealer": 0, "potential_stealer": 100, "other_stealer": 3, "general_leak": 4 },
+        "unresolved": { "vip": 0, "domain_stealer": 0, "potential_stealer": 48, "other_stealer": 3, "general_leak": 0 },
+        "enumeration": 1
+      },
+      "n_vulns": {
+        "total": { "critical": 0, "high": 9, "medium": 35, "low": 20, "info": 48 },
+        "active": { "critical": 0, "high": 1, "medium": 7, "low": 5, "info": 48 },
+        "passive": { "critical": 0, "high": 8, "medium": 28, "low": 15, "info": 0 }
+      },
+      "waf": { "count": 2, "assets": ["bbcc8899-0001-0001-0001-aabbccdd0001", "bbcc8899-0001-0001-0001-aabbccdd0002"] },
+      "cdn": { "count": 3, "assets": ["bbcc8899-0002-0001-0001-aabbccdd0001", "bbcc8899-0002-0001-0001-aabbccdd0002", "bbcc8899-0002-0001-0001-aabbccdd0003"] },
+      "unique_ipv4": 25,
+      "unique_ipv6": 12
+    },
+    {
+      "idsummary": "14c901de-88ef-4f91-03d8-4e0b2c5f1234",
+      "summary_text": "**Riepilogo Esecutivo della Vulnerabilità per \"logistics.demo\"**\n\nIl dominio \"logistics.demo\" mostra un punteggio di rischio di 74 su 100. Rischio significativo con porte industriali esposte e credenziali di sistema trovate in leak.\n\n**Vulnerabilità:**\n- 89 vulnerabilità totali: 2 critiche, 16 alte, 30 medie, 5 basse, 36 informative.\n\n**Esposizione dei Servizi:**\n- 58 asset, 20 IPv4 e 9 IPv6. Porte: 80 (22), 443 (18), 8080 (12), 502 (4), 102 (2).\n\n**Fuga di Dati:**\n- 1 domain_stealer, 310 potential_stealer, 18 other_stealer.\n\n**Certificati e Tecnologia:**\n- 9 certificati attivi, 11 scaduti. WAF su 1 asset, CDN su 2 asset.\n\n**Sicurezza Email:**\n- DMARC su \"none\". Spoofing possibile.",
+      "summary_text_en": "**Executive Summary of Vulnerability for \"logistics.demo\"**\n\nThe domain \"logistics.demo\" shows a risk score of 74 out of 100. Significant risk with exposed industrial ports and system credentials found in leaks.\n\n**Vulnerabilities:**\n- 89 total vulnerabilities: 2 critical, 16 high, 30 medium, 5 low, 36 informational.\n\n**Service Exposure:**\n- 58 assets, 20 unique IPv4 and 9 IPv6. Ports: 80 (22), 443 (18), 8080 (12), 502 (4), 102 (2).\n\n**Data Leakage:**\n- 1 domain_stealer, 310 potential_stealers, 18 other_stealers.\n\n**Certificates and Technology:**\n- 9 active certificates, 11 expired. WAF on 1 asset, CDN on 2 assets.\n\n**Email Security:**\n- DMARC on \"none\". Spoofing possible.",
+      "risk_score": "74",
+      "creation_date": "2024-11-14 16:55:30",
+      "last_edit": "2024-11-15 08:30:00",
+      "domain_name": "logistics.demo",
+      "servizi_esposti_score": 72,
+      "dataleak_score": 78,
+      "rapporto_leak_email_score": 55,
+      "spoofing_score": 100,
+      "open_ports_score": 10,
+      "blacklist_score": 0,
+      "vulnerability_score_active": 65,
+      "vulnerability_score_passive": 70,
+      "certificate_score": 65,
+      "n_port": {
+        "80": { "n": 22 },
+        "102": { "n": 2 },
+        "443": { "n": 18 },
+        "502": { "n": 4 },
+        "8080": { "n": 12 }
+      },
+      "n_cert_attivi": 9,
+      "n_cert_scaduti": 11,
+      "n_asset": 58,
+      "n_similar_domains": 5,
+      "email_security": {
+        "spoofable": "Spoofing possible.",
+        "dmarc_policy": "none",
+        "blacklist_detections": 0,
+        "blacklist_total_list": 60,
+        "blacklist_detected_list": []
+      },
+      "n_dataleak": {
+        "total": { "vip": 0, "domain_stealer": 1, "potential_stealer": 310, "other_stealer": 18, "general_leak": 2 },
+        "resolved": { "vip": 0, "domain_stealer": 0, "potential_stealer": 60, "other_stealer": 3, "general_leak": 1 },
+        "unresolved": { "vip": 0, "domain_stealer": 1, "potential_stealer": 250, "other_stealer": 15, "general_leak": 1 },
+        "enumeration": 2
+      },
+      "n_vulns": {
+        "total": { "critical": 2, "high": 16, "medium": 30, "low": 5, "info": 36 },
+        "active": { "critical": 2, "high": 2, "medium": 6, "low": 2, "info": 36 },
+        "passive": { "critical": 0, "high": 14, "medium": 24, "low": 3, "info": 0 }
+      },
+      "waf": { "count": 1, "assets": ["ccdd9900-0001-0001-0001-aabbccdd0001"] },
+      "cdn": { "count": 2, "assets": ["ccdd9900-0002-0001-0001-aabbccdd0001", "ccdd9900-0002-0001-0001-aabbccdd0002"] },
+      "unique_ipv4": 20,
+      "unique_ipv6": 9
+    },
+    {
+      "idsummary": "25d012ef-99fa-4002-14e9-5f1c3d6a2345",
+      "summary_text": "**Riepilogo Esecutivo della Vulnerabilità per \"ecommerce.demo\"**\n\nIl dominio \"ecommerce.demo\" presenta un punteggio di rischio di 63 su 100. Rischio medio-alto con dati di carte di credito potenzialmente esposti e porte di database accessibili.\n\n**Vulnerabilità:**\n- 77 vulnerabilità totali: 1 critica, 10 alte, 25 medie, 12 basse, 29 informative.\n\n**Esposizione dei Servizi:**\n- 49 asset, 14 IPv4 e 7 IPv6. Porte: 80 (32), 443 (28), 3306 (3), 5432 (2).\n\n**Fuga di Dati:**\n- 0 domain_stealer, 187 potential_stealer, 9 other_stealer.\n\n**Certificati e Tecnologia:**\n- 12 certificati attivi, 5 scaduti. WAF su 5 asset, CDN su 6 asset.\n\n**Sicurezza Email:**\n- DMARC su \"quarantine\". Nessuna blacklist.",
+      "summary_text_en": "**Executive Summary of Vulnerability for \"ecommerce.demo\"**\n\nThe domain \"ecommerce.demo\" has a risk score of 63 out of 100. Medium-high risk with potentially exposed credit card data and accessible database ports.\n\n**Vulnerabilities:**\n- 77 total vulnerabilities: 1 critical, 10 high, 25 medium, 12 low, 29 informational.\n\n**Service Exposure:**\n- 49 assets, 14 unique IPv4 and 7 IPv6. Ports: 80 (32), 443 (28), 3306 (3), 5432 (2).\n\n**Data Leakage:**\n- 0 domain_stealers, 187 potential_stealers, 9 other_stealers.\n\n**Certificates and Technology:**\n- 12 active certificates, 5 expired. WAF on 5 assets, CDN on 6 assets.\n\n**Email Security:**\n- DMARC on \"quarantine\". No blacklist.",
+      "risk_score": "63",
+      "creation_date": "2024-12-03 10:10:10",
+      "last_edit": "2024-12-03 17:45:00",
+      "domain_name": "ecommerce.demo",
+      "servizi_esposti_score": 60,
+      "dataleak_score": 65,
+      "rapporto_leak_email_score": 40,
+      "spoofing_score": 50,
+      "open_ports_score": 15,
+      "blacklist_score": 0,
+      "vulnerability_score_active": 50,
+      "vulnerability_score_passive": 60,
+      "certificate_score": 30,
+      "n_port": {
+        "80": { "n": 32 },
+        "443": { "n": 28 },
+        "3306": { "n": 3 },
+        "5432": { "n": 2 }
+      },
+      "n_cert_attivi": 12,
+      "n_cert_scaduti": 5,
+      "n_asset": 49,
+      "n_similar_domains": 8,
+      "email_security": {
+        "spoofable": "Spoofing possible.",
+        "dmarc_policy": "quarantine",
+        "blacklist_detections": 0,
+        "blacklist_total_list": 60,
+        "blacklist_detected_list": []
+      },
+      "n_dataleak": {
+        "total": { "vip": 0, "domain_stealer": 0, "potential_stealer": 187, "other_stealer": 9, "general_leak": 1 },
+        "resolved": { "vip": 0, "domain_stealer": 0, "potential_stealer": 70, "other_stealer": 3, "general_leak": 1 },
+        "unresolved": { "vip": 0, "domain_stealer": 0, "potential_stealer": 117, "other_stealer": 6, "general_leak": 0 },
+        "enumeration": 1
+      },
+      "n_vulns": {
+        "total": { "critical": 1, "high": 10, "medium": 25, "low": 12, "info": 29 },
+        "active": { "critical": 1, "high": 1, "medium": 5, "low": 3, "info": 29 },
+        "passive": { "critical": 0, "high": 9, "medium": 20, "low": 9, "info": 0 }
+      },
+      "waf": { "count": 5, "assets": ["ddeeff11-0001-0001-0001-aabbccdd0001", "ddeeff11-0001-0001-0001-aabbccdd0002", "ddeeff11-0001-0001-0001-aabbccdd0003", "ddeeff11-0001-0001-0001-aabbccdd0004", "ddeeff11-0001-0001-0001-aabbccdd0005"] },
+      "cdn": { "count": 6, "assets": ["ddeeff11-0002-0001-0001-aabbccdd0001", "ddeeff11-0002-0001-0001-aabbccdd0002", "ddeeff11-0002-0001-0001-aabbccdd0003", "ddeeff11-0002-0001-0001-aabbccdd0004", "ddeeff11-0002-0001-0001-aabbccdd0005", "ddeeff11-0002-0001-0001-aabbccdd0006"] },
+      "unique_ipv4": 14,
+      "unique_ipv6": 7
+    },
+    {
+      "idsummary": "36e123fa-aab1-4113-25fa-6a2d4e7b3456",
+      "summary_text": "**Riepilogo Esecutivo della Vulnerabilità per \"energygroup.demo\"**\n\nIl dominio \"energygroup.demo\" mostra un punteggio di rischio di 88 su 100. Situazione critica con sistemi SCADA esposti su internet e numerose credenziali compromesse.\n\n**Vulnerabilità:**\n- 120 vulnerabilità totali: 4 critiche, 22 alte, 40 medie, 0 basse, 54 informative.\n\n**Esposizione dei Servizi:**\n- 76 asset, 24 IPv4 e 14 IPv6. Porte: 80 (35), 443 (30), 102 (8), 502 (6), 4840 (3).\n\n**Fuga di Dati:**\n- 2 domain_stealer, 543 potential_stealer, 28 other_stealer.\n\n**Certificati e Tecnologia:**\n- 10 certificati attivi, 16 scaduti. WAF su 2 asset, CDN su 1 asset.\n\n**Sicurezza Email:**\n- DMARC su \"quarantine\". 2 rilevamenti in blacklist.",
+      "summary_text_en": "**Executive Summary of Vulnerability for \"energygroup.demo\"**\n\nThe domain \"energygroup.demo\" shows a risk score of 88 out of 100. Critical situation with SCADA systems exposed on the internet and numerous compromised credentials.\n\n**Vulnerabilities:**\n- 120 total vulnerabilities: 4 critical, 22 high, 40 medium, 0 low, 54 informational.\n\n**Service Exposure:**\n- 76 assets, 24 unique IPv4 and 14 IPv6. Ports: 80 (35), 443 (30), 102 (8), 502 (6), 4840 (3).\n\n**Data Leakage:**\n- 2 domain_stealers, 543 potential_stealers, 28 other_stealers.\n\n**Certificates and Technology:**\n- 10 active certificates, 16 expired. WAF on 2 assets, CDN on 1 asset.\n\n**Email Security:**\n- DMARC on \"quarantine\". 2 blacklist detections.",
+      "risk_score": "88",
+      "creation_date": "2025-01-20 14:00:00",
+      "last_edit": "2025-01-21 09:15:00",
+      "domain_name": "energygroup.demo",
+      "servizi_esposti_score": 85,
+      "dataleak_score": 92,
+      "rapporto_leak_email_score": 65,
+      "spoofing_score": 50,
+      "open_ports_score": 5,
+      "blacklist_score": 50,
+      "vulnerability_score_active": 78,
+      "vulnerability_score_passive": 82,
+      "certificate_score": 70,
+      "n_port": {
+        "80": { "n": 35 },
+        "102": { "n": 8 },
+        "443": { "n": 30 },
+        "502": { "n": 6 },
+        "4840": { "n": 3 }
+      },
+      "n_cert_attivi": 10,
+      "n_cert_scaduti": 16,
+      "n_asset": 76,
+      "n_similar_domains": 10,
+      "email_security": {
+        "spoofable": "Spoofing possible.",
+        "dmarc_policy": "quarantine",
+        "blacklist_detections": 2,
+        "blacklist_total_list": 60,
+        "blacklist_detected_list": ["spamhaus", "barracuda"]
+      },
+      "n_dataleak": {
+        "total": { "vip": 1, "domain_stealer": 2, "potential_stealer": 543, "other_stealer": 28, "general_leak": 3 },
+        "resolved": { "vip": 0, "domain_stealer": 0, "potential_stealer": 100, "other_stealer": 5, "general_leak": 1 },
+        "unresolved": { "vip": 1, "domain_stealer": 2, "potential_stealer": 443, "other_stealer": 23, "general_leak": 2 },
+        "enumeration": 3
+      },
+      "n_vulns": {
+        "total": { "critical": 4, "high": 22, "medium": 40, "low": 0, "info": 54 },
+        "active": { "critical": 4, "high": 3, "medium": 9, "low": 0, "info": 54 },
+        "passive": { "critical": 0, "high": 19, "medium": 31, "low": 0, "info": 0 }
+      },
+      "waf": { "count": 2, "assets": ["eeff0022-0001-0001-0001-aabbccdd0001", "eeff0022-0001-0001-0001-aabbccdd0002"] },
+      "cdn": { "count": 1, "assets": ["eeff0022-0002-0001-0001-aabbccdd0001"] },
+      "unique_ipv4": 24,
+      "unique_ipv6": 14
+    }
+  ]
+}

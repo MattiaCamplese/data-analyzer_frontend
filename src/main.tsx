@@ -5,31 +5,46 @@ import { RouterProvider, createBrowserRouter } from "react-router-dom"
 import { QueryClientProvider, QueryClient } from "@tanstack/react-query"
 import { Toaster } from "sonner"
 import { ThemeProvider } from "@/components/theme-provider.tsx"
-import Layout from "./layout/layout"
-import HomePage from "./pages/home-page"
+import { TooltipProvider } from "@/components/ui/tooltip"
+import AppLayout from "./layout/app-layout"
+import DashboardPage from "./pages/dashboard-page"
+import ReportPage from "./pages/report-page"
 
-const client = new QueryClient()
+const client = new QueryClient({
+  defaultOptions: {
+    queries: {
+      refetchOnWindowFocus: false,
+      retry: 1,
+    },
+  },
+})
 
 const router = createBrowserRouter([
   {
     path: "/",
-    element: <Layout />,
+    element: <AppLayout />,
     children: [
       {
         index: true,
-        element: <HomePage />
+        element: <DashboardPage />,
       },
-    ]
-  }
+      {
+        path: "/report/:id",
+        element: <ReportPage />,
+      },
+    ],
+  },
 ])
 
 createRoot(document.getElementById("root")!).render(
   <StrictMode>
     <ThemeProvider>
-      <QueryClientProvider client={client}>
-        <RouterProvider router={router} />
-        <Toaster />
-      </QueryClientProvider>
+      <TooltipProvider>
+        <QueryClientProvider client={client}>
+          <RouterProvider router={router} />
+          <Toaster />
+        </QueryClientProvider>
+      </TooltipProvider>
     </ThemeProvider>
   </StrictMode>
 )
