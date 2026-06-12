@@ -116,7 +116,7 @@ export function RiskTrendChart() {
         </div>
       </CardHeader>
       <CardContent className="pt-1 pb-3">
-        <div className="h-35">
+        <div className="h-52">
           <ResponsiveContainer width="100%" height="100%">
             <AreaChart data={data} margin={{ top: 4, right: 4, left: -24, bottom: 0 }}>
               <defs>
@@ -139,8 +139,10 @@ export function RiskTrendChart() {
                 tickLine={false}
                 axisLine={false}
                 tick={{ fontSize: 10, fill: "var(--color-muted-foreground)" }}
-                ticks={[0, 30, 60, 80, 100]}
+                ticks={[0, 20, 40, 60, 80, 100]}
               />
+              <ReferenceLine y={20} stroke="currentColor" strokeDasharray="3 3" strokeOpacity={0.15} />
+              <ReferenceLine y={40} stroke="currentColor" strokeDasharray="3 3" strokeOpacity={0.15} />
               <ReferenceLine y={30} stroke="#22c55e" strokeDasharray="4 4" strokeOpacity={0.4} />
               <ReferenceLine y={60} stroke="#eab308" strokeDasharray="4 4" strokeOpacity={0.4} />
               <ReferenceLine y={80} stroke="#ef4444" strokeDasharray="4 4" strokeOpacity={0.4} />
