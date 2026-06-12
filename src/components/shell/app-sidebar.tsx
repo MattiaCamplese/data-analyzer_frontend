@@ -21,7 +21,7 @@ export function AppSidebar() {
         <SidebarMenuButton asChild>
           <a href="/">
             <RiShieldCheckLine />
-            <span className="font-semibold">data-analyzer</span>
+            <span className="font-semibold">Data-Analyzer</span>
           </a>
         </SidebarMenuButton>
       </SidebarHeader>
