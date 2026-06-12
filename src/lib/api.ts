@@ -1,8 +1,14 @@
 import type { SecurityReport } from "@/types/report"
 import { mockReports } from "./mock-data"
+import { useAuthStore } from "@/features/auth/auth.store"
 
 const BASE_URL = (import.meta.env.VITE_API_BASE_URL as string | undefined) ?? ""
 export const isMock = !BASE_URL
+
+function authHeader(): HeadersInit {
+  const token = useAuthStore.getState().token
+  return token ? { Authorization: `Bearer ${token}` } : {}
+}
 
 // ── Lista report ───────────────────────────────────────────
 export async function fetchReports(params?: {
@@ -24,7 +30,7 @@ export async function fetchReports(params?: {
   if (params?.page)     url.searchParams.set("page",    String(params.page))
   if (params?.perPage)  url.searchParams.set("perPage", String(params.perPage))
 
-  const res = await fetch(url.toString())
+  const res = await fetch(url.toString(), { headers: authHeader() })
   if (!res.ok) throw new Error(`HTTP ${res.status}`)
   return res.json()
 }
@@ -37,7 +43,7 @@ export async function fetchReport(id: string): Promise<SecurityReport> {
     return report
   }
 
-  const res = await fetch(`${BASE_URL}/api/summaries/${id}`)
+  const res = await fetch(`${BASE_URL}/api/summaries/${id}`, { headers: authHeader() })
   if (!res.ok) throw new Error(`HTTP ${res.status}`)
   return res.json()
 }
@@ -49,7 +55,7 @@ export async function uploadReports(data: unknown): Promise<{ inserted: number }
   }
   const res = await fetch(`${BASE_URL}/api/summaries`, {
     method: "POST",
-    headers: { "Content-Type": "application/json" },
+    headers: { "Content-Type": "application/json", ...authHeader() },
     body: JSON.stringify(data),
   })
   if (!res.ok) {
@@ -62,7 +68,10 @@ export async function uploadReports(data: unknown): Promise<{ inserted: number }
 // ── Elimina report ─────────────────────────────────────────
 export async function deleteReport(id: string): Promise<void> {
   if (isMock) return
-  const res = await fetch(`${BASE_URL}/api/summaries/${id}`, { method: "DELETE" })
+  const res = await fetch(`${BASE_URL}/api/summaries/${id}`, {
+    method: "DELETE",
+    headers: authHeader(),
+  })
   if (!res.ok) {
     const body = await res.json().catch(() => null)
     throw new Error(body?.message ?? `HTTP ${res.status}`)
@@ -72,6 +81,9 @@ export async function deleteReport(id: string): Promise<void> {
 // ── Seed (utility) ─────────────────────────────────────────
 export async function seedDatabase(): Promise<void> {
   if (isMock) return
-  const res = await fetch(`${BASE_URL}/api/summaries/seed`, { method: "POST" })
+  const res = await fetch(`${BASE_URL}/api/summaries/seed`, {
+    method: "POST",
+    headers: authHeader(),
+  })
   if (!res.ok) throw new Error(`Seed failed: HTTP ${res.status}`)
 }

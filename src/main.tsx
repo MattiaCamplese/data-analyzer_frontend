@@ -9,6 +9,8 @@ import { TooltipProvider } from "@/components/ui/tooltip"
 import AppLayout from "./layout/app-layout"
 import DashboardPage from "./pages/dashboard-page"
 import ReportPage from "./pages/report-page"
+import LoginPage from "./pages/login-page"
+import ProtectedRoute from "./components/shell/protected-route"
 
 const client = new QueryClient({
   defaultOptions: {
@@ -21,16 +23,25 @@ const client = new QueryClient({
 
 const router = createBrowserRouter([
   {
-    path: "/",
-    element: <AppLayout />,
+    path: "/login",
+    element: <LoginPage />,
+  },
+  {
+    element: <ProtectedRoute />,
     children: [
       {
-        index: true,
-        element: <DashboardPage />,
-      },
-      {
-        path: "/report/:id",
-        element: <ReportPage />,
+        path: "/",
+        element: <AppLayout />,
+        children: [
+          {
+            index: true,
+            element: <DashboardPage />,
+          },
+          {
+            path: "/report/:id",
+            element: <ReportPage />,
+          },
+        ],
       },
     ],
   },

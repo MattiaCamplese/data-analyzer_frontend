@@ -1,10 +1,11 @@
 import { useParams, Link } from "react-router-dom";
+import Markdown from "react-markdown";
 import { ArrowLeft, Globe, Calendar, RefreshCw } from "lucide-react";
 import { useReport } from "@/hooks/use-reports";
 import { getRiskInfo, formatDate } from "@/lib/risk-utils";
 import { cn } from "@/lib/utils";
 import { DashboardSkeleton } from "@/components/shell/dashboard-skeleton";
-import { Card, CardContent, CardHeader, CardTitle, CardDescription } from "@/components/ui/card";
+import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { RiskGauge } from "@/components/report/risk-gauge";
 import { ScoreCard } from "@/components/report/score-card";
 import { PortsChart } from "@/components/report/ports-chart";
@@ -72,10 +73,18 @@ export default function ReportPage() {
         <Card className="shadow-none dark:ring-0">
           <CardHeader>
             <CardTitle className="text-sm">Sommario</CardTitle>
-            <CardDescription>Analisi in italiano</CardDescription>
           </CardHeader>
           <CardContent>
-            <p className="text-sm leading-relaxed">{report.summary_text}</p>
+            <Markdown
+              components={{
+                p:      ({ children }) => <p className="text-sm leading-relaxed mb-2 last:mb-0">{children}</p>,
+                strong: ({ children }) => <strong className="font-semibold text-foreground">{children}</strong>,
+                ul:     ({ children }) => <ul className="mt-1 mb-2 space-y-0.5 pl-4 text-sm list-disc">{children}</ul>,
+                li:     ({ children }) => <li className="text-muted-foreground leading-relaxed">{children}</li>,
+              }}
+            >
+              {report.summary_text_en}
+            </Markdown>
           </CardContent>
         </Card>
       </div>

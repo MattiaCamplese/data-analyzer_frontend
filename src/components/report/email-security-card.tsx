@@ -30,7 +30,7 @@ function StatusRow({ label, ok, value }: { label: string; ok: boolean; value?: s
 }
 
 export function EmailSecurityCard({ emailSecurity }: EmailSecurityCardProps) {
-  const isSpoofable = !!emailSecurity.spoofable;
+  const isSpoofable = !!emailSecurity.spoofable && !/not possible/i.test(emailSecurity.spoofable);
   const dmarcOk = emailSecurity.dmarc_policy !== "none" && !!emailSecurity.dmarc_policy;
   const blacklistOk = emailSecurity.blacklist_detections === 0;
 
