@@ -20,6 +20,7 @@ export function UploadButton() {
       }
       toast.success(`${result.inserted} analisi salvate nel database`);
       queryClient.invalidateQueries({ queryKey: ["reports"] });
+      queryClient.invalidateQueries({ queryKey: ["reports-all"] });
       const domains = Array.isArray(variables)
         ? (variables as { domain_name?: string }[]).flatMap((d) => d.domain_name ? [d.domain_name] : [])
         : [];

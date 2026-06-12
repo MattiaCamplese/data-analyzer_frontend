@@ -6,6 +6,7 @@ import { cn } from "@/lib/utils";
 import { getRiskInfo } from "@/lib/risk-utils";
 import type { SecurityReport } from "@/types/report";
 import { useT } from "@/hooks/use-t";
+import { useAllReports } from "@/hooks/use-reports";
 
 interface DayPoint {
   date: string;
@@ -38,13 +39,13 @@ function useRiskHistory(reports: SecurityReport[]): DayPoint[] {
   return useMemo(() => {
     const byDate: Record<string, number[]> = {};
     for (const r of reports) {
-      const d = r.creation_date?.split("T")[0] ?? "";
+      const d = (r.creation_date ?? "").slice(0, 10);
       if (d) (byDate[d] ??= []).push(r.risk_score);
     }
     const realPoints = Object.entries(byDate).map(([date, scores]) => ({
       date,
       score: Math.round(scores.reduce((a, b) => a + b, 0) / scores.length),
-      label: new Date(date).toLocaleDateString("it-IT", { day: "2-digit", month: "short" }),
+      label: new Date(date + "T12:00:00").toLocaleDateString("it-IT", { day: "2-digit", month: "short" }),
     }));
 
     if (realPoints.length < 7) return generateMockHistory(currentAvg);
@@ -81,12 +82,10 @@ function CustomTooltip({ active, payload, label }: CustomTooltipProps) {
   );
 }
 
-interface Props {
-  reports: SecurityReport[];
-}
-
-export function RiskTrendChart({ reports }: Props) {
+export function RiskTrendChart() {
   const t = useT();
+  const { data: result } = useAllReports();
+  const reports: SecurityReport[] = result?.items ?? [];
   const data = useRiskHistory(reports);
   const last = data[data.length - 1]?.score ?? 0;
   const prev = data[data.length - 2]?.score ?? last;

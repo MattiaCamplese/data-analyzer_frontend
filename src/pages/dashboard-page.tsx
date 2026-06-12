@@ -178,7 +178,7 @@ export default function DashboardPage() {
       </div>
 
       {/* Risk trend chart */}
-      {reports.length > 0 && <RiskTrendChart reports={reports} />}
+      <RiskTrendChart />
 
       {/* Tabella domini */}
       <Card className="shadow-none dark:ring-0 gap-0">

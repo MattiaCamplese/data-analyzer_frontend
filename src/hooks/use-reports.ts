@@ -10,6 +10,14 @@ export function useReports(search?: string) {
   })
 }
 
+export function useAllReports() {
+  return useQuery({
+    queryKey: ["reports-all"],
+    queryFn: () => fetchReports({ latest: false }),
+    staleTime: 30_000,
+  })
+}
+
 export function useReport(domain: string, scanId?: string) {
   const queryClient = useQueryClient()
   return useQuery({
