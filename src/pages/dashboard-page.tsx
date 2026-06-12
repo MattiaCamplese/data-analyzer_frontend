@@ -321,10 +321,10 @@ export default function DashboardPage() {
                           <Globe className="size-3.5 shrink-0 text-muted-foreground" />
                           <span className="font-medium truncate">{report.domain_name}</span>
                           {report.status === "error" && (
-                            <AlertCircle className="size-3.5 shrink-0 text-destructive" title={t.dash.statusError} />
+                            <span title={t.dash.statusError}><AlertCircle className="size-3.5 shrink-0 text-destructive" /></span>
                           )}
                           {report.status === "pending" && (
-                            <Clock className="size-3.5 shrink-0 text-amber-500" title={t.dash.statusPending} />
+                            <span title={t.dash.statusPending}><Clock className="size-3.5 shrink-0 text-amber-500" /></span>
                           )}
                         </div>
                       </TableCell>
