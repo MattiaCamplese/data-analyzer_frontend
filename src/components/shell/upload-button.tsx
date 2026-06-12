@@ -4,20 +4,26 @@ import { toast } from "sonner";
 import { Upload, Loader2 } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { uploadReports, isMock } from "@/lib/api";
+import { useNotificationsStore } from "@/features/notifications/notifications.store";
 
 export function UploadButton() {
   const fileInputRef = useRef<HTMLInputElement>(null);
   const queryClient = useQueryClient();
+  const addNotification = useNotificationsStore((s) => s.add);
 
   const { mutate, isPending } = useMutation({
     mutationFn: uploadReports,
-    onSuccess: (result) => {
+    onSuccess: (result, variables) => {
       if (isMock) {
         toast.warning("Modalità demo: VITE_API_BASE_URL non impostato, riavvia il dev server dopo aver configurato .env.local");
         return;
       }
       toast.success(`${result.inserted} analisi salvate nel database`);
       queryClient.invalidateQueries({ queryKey: ["reports"] });
+      const domains = Array.isArray(variables)
+        ? (variables as { domain_name?: string }[]).flatMap((d) => d.domain_name ? [d.domain_name] : [])
+        : [];
+      domains.forEach((domain) => addNotification({ domains: [domain], count: 1 }));
     },
     onError: (err: Error) => {
       toast.error(`Errore upload: ${err.message}`);
@@ -32,7 +38,6 @@ export function UploadButton() {
     reader.onload = (ev) => {
       try {
         const json = JSON.parse(ev.target?.result as string);
-        // Supporta sia array diretto che wrapper { results: [...] }
         const data = Array.isArray(json) ? json : (json?.results ?? json);
         mutate(data);
       } catch {
