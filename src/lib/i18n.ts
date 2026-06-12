@@ -61,6 +61,8 @@ const it = {
     deleteSuccess:  (domain: string) => `${domain} eliminato`,
     deleteError:    (msg: string) => `Errore: ${msg}`,
     compareTooltip: "Confronta scansioni storiche",
+    statusPending:  "Scansione in elaborazione",
+    statusError:    "Errore nella scansione",
   },
 
   // ── report ────────────────────────────────────────────────
@@ -236,6 +238,8 @@ const en: typeof it = {
     deleteSuccess:  (domain: string) => `${domain} deleted`,
     deleteError:    (msg: string) => `Error: ${msg}`,
     compareTooltip: "Compare historical scans",
+    statusPending:  "Scan in progress",
+    statusError:    "Scan error",
   },
 
   report: {

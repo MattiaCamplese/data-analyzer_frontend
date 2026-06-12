@@ -1,6 +1,6 @@
 import { useState, useRef, useEffect } from "react";
 import { useNavigate, useSearchParams } from "react-router-dom";
-import { Search, Globe, TrendingUp, AlertTriangle, ShieldCheck, Trash2, SlidersHorizontal, ArrowUp, ArrowDown, ChevronsUpDown, GitCompare } from "lucide-react";
+import { Search, Globe, TrendingUp, AlertTriangle, ShieldCheck, Trash2, SlidersHorizontal, ArrowUp, ArrowDown, ChevronsUpDown, GitCompare, AlertCircle, Clock } from "lucide-react";
 import { toast } from "sonner";
 import { useReports, useDeleteReport } from "@/hooks/use-reports";
 import { getRiskInfo, formatDate } from "@/lib/risk-utils";
@@ -320,6 +320,12 @@ export default function DashboardPage() {
                         <div className="flex items-center gap-2 min-w-0">
                           <Globe className="size-3.5 shrink-0 text-muted-foreground" />
                           <span className="font-medium truncate">{report.domain_name}</span>
+                          {report.status === "error" && (
+                            <AlertCircle className="size-3.5 shrink-0 text-destructive" title={t.dash.statusError} />
+                          )}
+                          {report.status === "pending" && (
+                            <Clock className="size-3.5 shrink-0 text-amber-500" title={t.dash.statusPending} />
+                          )}
                         </div>
                       </TableCell>
                       <TableCell className="whitespace-nowrap">

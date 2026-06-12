@@ -17,9 +17,11 @@ import { EmailSecurityCard } from "@/components/report/email-security-card";
 import { NetworkInfoCard } from "@/components/report/network-info-card";
 import { WafCdnCard } from "@/components/report/waf-cdn-card";
 import { useT } from "@/hooks/use-t";
+import { useLangStore } from "@/features/lang/lang.store";
 
 export default function ReportPage() {
   const t = useT();
+  const lang = useLangStore((s) => s.lang);
   const { id: domain } = useParams<{ id: string }>();
   const [searchParams, setSearchParams] = useSearchParams();
   const navigate = useNavigate();
@@ -197,7 +199,7 @@ export default function ReportPage() {
                   li:     ({ children }) => <li className="text-muted-foreground leading-relaxed">{children}</li>,
                 }}
               >
-                {report.summary_text_en}
+                {lang === "it" ? report.summary_text : report.summary_text_en}
               </Markdown>
             </CardContent>
           </Card>
