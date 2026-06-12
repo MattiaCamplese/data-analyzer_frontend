@@ -18,13 +18,21 @@ export async function fetchReports(params?: {
   latest?: boolean
 }): Promise<{ items: SecurityReport[]; totalItems: number; totalPages: number }> {
   if (isMock) {
-    // Deduplicate by domain_name, keep latest creation_date (mock behaviour)
+    // Count scans per domain
+    const countByDomain = new Map<string, number>()
+    for (const r of mockReports) {
+      countByDomain.set(r.domain_name, (countByDomain.get(r.domain_name) ?? 0) + 1)
+    }
+    // Deduplicate by domain_name, keep latest creation_date
     const byDomain = new Map<string, SecurityReport>()
     for (const r of mockReports) {
       const existing = byDomain.get(r.domain_name)
       if (!existing || r.creation_date > existing.creation_date) byDomain.set(r.domain_name, r)
     }
-    let items = Array.from(byDomain.values())
+    let items = Array.from(byDomain.values()).map((r) => ({
+      ...r,
+      scan_count: countByDomain.get(r.domain_name) ?? 1,
+    }))
     if (params?.search) {
       items = items.filter((r) =>
         r.domain_name.toLowerCase().includes(params.search!.toLowerCase()),

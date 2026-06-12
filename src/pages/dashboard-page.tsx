@@ -339,8 +339,9 @@ export default function DashboardPage() {
                           <Button
                             size="icon-sm"
                             variant="outline"
-                            title={t.dash.compareTooltip}
-                            className="text-muted-foreground hover:text-primary hover:border-primary/50"
+                            title={(report.scan_count ?? 1) > 1 ? t.dash.compareTooltip : t.report.compareDisabled}
+                            disabled={(report.scan_count ?? 1) <= 1}
+                            className="text-muted-foreground hover:text-primary hover:border-primary/50 disabled:cursor-not-allowed disabled:opacity-40"
                             onClick={() => navigate(`/compare/${encodeURIComponent(report.domain_name)}`)}
                           >
                             <GitCompare className="size-3.5" />

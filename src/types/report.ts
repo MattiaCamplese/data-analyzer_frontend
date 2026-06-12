@@ -48,6 +48,7 @@ export interface CDN {
 export interface SecurityReport {
   idsummary: string
   status?: 'success' | 'error' | 'pending'
+  scan_count?: number
   summary_text: string
   summary_text_en: string
   risk_score: number
