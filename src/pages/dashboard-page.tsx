@@ -1,5 +1,5 @@
 import { useState, useRef, useEffect } from "react";
-import { useNavigate } from "react-router-dom";
+import { useNavigate, useSearchParams } from "react-router-dom";
 import { Search, Globe, TrendingUp, AlertTriangle, ShieldCheck, Trash2, SlidersHorizontal, ArrowUp, ArrowDown, ChevronsUpDown, GitCompare } from "lucide-react";
 import { toast } from "sonner";
 import { useReports, useDeleteReport } from "@/hooks/use-reports";
@@ -24,17 +24,35 @@ const RISK_LEVEL_KEYS = [
 export default function DashboardPage() {
   const t = useT();
   const PER_PAGE = 10;
-  const [search, setSearch] = useState("");
-  const [page, setPage] = useState(1);
-  const [riskFilters, setRiskFilters] = useState<string[]>([]);
-  const [sortCol, setSortCol] = useState<string | null>(null);
-  const [sortDir, setSortDir] = useState<"asc" | "desc">("asc");
-  const [filterOpen, setFilterOpen] = useState(false);
+  const [searchParams, setSearchParams] = useSearchParams();
   const filterRef = useRef<HTMLDivElement>(null);
   const navigate = useNavigate();
   const { data: result, isLoading, isError } = useReports();
   const { mutate: deleteReport, isPending: isDeleting } = useDeleteReport();
 
+  // ── state from URL (persisted on refresh) ──────────────────
+  const page        = Math.max(1, parseInt(searchParams.get("p") ?? "1", 10));
+  const search      = searchParams.get("q") ?? "";
+  const riskFilters = searchParams.get("risk")?.split(",").filter(Boolean) ?? [];
+  const sortCol     = searchParams.get("sort") ?? null;
+  const sortDir     = (searchParams.get("dir") as "asc" | "desc") || "asc";
+
+  // ── local UI state (not persisted) ──────────────────────────
+  const [filterOpen, setFilterOpen] = useState(false);
+
+  function update(patch: Record<string, string | null>, resetPage = false) {
+    setSearchParams(prev => {
+      const next = new URLSearchParams(prev);
+      if (resetPage) next.set("p", "1");
+      for (const [k, v] of Object.entries(patch)) {
+        if (v === null || v === "") next.delete(k);
+        else next.set(k, v);
+      }
+      return next;
+    });
+  }
+
+  // Close filter dropdown when clicking outside
   useEffect(() => {
     if (!filterOpen) return;
     function handleClick(e: MouseEvent) {
@@ -46,22 +64,21 @@ export default function DashboardPage() {
     return () => document.removeEventListener("mousedown", handleClick);
   }, [filterOpen]);
 
-  const toggleRisk = (key: string) => {
-    setRiskFilters((prev) =>
-      prev.includes(key) ? prev.filter((k) => k !== key) : [...prev, key]
-    );
-    setPage(1);
-  };
+  function toggleRisk(key: string) {
+    const next = riskFilters.includes(key)
+      ? riskFilters.filter((k) => k !== key)
+      : [...riskFilters, key];
+    update({ risk: next.length ? next.join(",") : null }, true);
+    setFilterOpen(false);
+  }
 
-  const handleSort = (col: string) => {
+  function handleSort(col: string) {
     if (sortCol === col) {
-      setSortDir((d) => (d === "asc" ? "desc" : "asc"));
+      update({ dir: sortDir === "asc" ? "desc" : "asc" }, true);
     } else {
-      setSortCol(col);
-      setSortDir("asc");
+      update({ sort: col, dir: "asc" }, true);
     }
-    setPage(1);
-  };
+  }
 
   const SortIcon = ({ col }: { col: string }) => {
     if (sortCol !== col) return <ChevronsUpDown className="size-3 opacity-30" />;
@@ -106,16 +123,15 @@ export default function DashboardPage() {
     });
   }
 
-  const totalPages = Math.max(1, Math.ceil(filtered.length / PER_PAGE));
+  const totalPages  = Math.max(1, Math.ceil(filtered.length / PER_PAGE));
   const currentPage = Math.min(page, totalPages);
-  const paginated = filtered.slice((currentPage - 1) * PER_PAGE, currentPage * PER_PAGE);
+  const paginated   = filtered.slice((currentPage - 1) * PER_PAGE, currentPage * PER_PAGE);
 
-  const avgRisk =
-    reports?.length
-      ? Math.round(reports.reduce((s, r) => s + r.risk_score, 0) / reports.length)
-      : 0;
-  const highRisk = (reports ?? []).filter((r) => r.risk_score > 60).length;
-  const critical  = (reports ?? []).filter((r) => r.risk_score > 80).length;
+  const avgRisk = reports.length
+    ? Math.round(reports.reduce((s, r) => s + r.risk_score, 0) / reports.length)
+    : 0;
+  const highRisk = reports.filter((r) => r.risk_score > 60).length;
+  const critical  = reports.filter((r) => r.risk_score > 80).length;
 
   if (isLoading) return <DashboardSkeleton />;
 
@@ -134,7 +150,7 @@ export default function DashboardPage() {
         <Card className="shadow-none dark:ring-0">
           <CardHeader><CardTitle className="text-xs font-medium text-muted-foreground uppercase tracking-wide">{t.dash.domains}</CardTitle></CardHeader>
           <CardContent className="flex items-end justify-between">
-            <p className="text-2xl font-bold tabular-nums">{reports?.length ?? 0}</p>
+            <p className="text-2xl font-bold tabular-nums">{reports.length}</p>
             <Globe className="size-4 text-muted-foreground" />
           </CardContent>
         </Card>
@@ -213,7 +229,7 @@ export default function DashboardPage() {
                         <div className="my-2.5 border-t" />
                         <button
                           className="w-full rounded px-2 py-1 text-xs text-destructive hover:bg-destructive/10"
-                          onClick={() => { setRiskFilters([]); setPage(1); }}
+                          onClick={() => { update({ risk: null, p: "1" }); setFilterOpen(false); }}
                         >
                           {t.dash.removeFilters}
                         </button>
@@ -229,7 +245,7 @@ export default function DashboardPage() {
                   type="text"
                   placeholder={t.dash.searchPlaceholder}
                   value={search}
-                  onChange={(e) => { setSearch(e.target.value); setPage(1); }}
+                  onChange={(e) => update({ q: e.target.value || null, p: "1" })}
                   className="h-8 w-full rounded-md border bg-background pl-8 pr-3 text-sm outline-none transition focus:ring-2 focus:ring-ring/30 sm:w-64"
                 />
               </div>
@@ -292,6 +308,7 @@ export default function DashboardPage() {
                     Object.values(report.n_vulns.active).reduce((s, v) => s + (v ?? 0), 0) +
                     Object.values(report.n_vulns.passive).reduce((s, v) => s + (v ?? 0), 0);
                   const totalLeaks = Object.values(report.n_dataleak.total).reduce((s, v) => s + v, 0);
+                  const canCompare = (report.scan_count ?? 1) > 1;
 
                   return (
                     <TableRow
@@ -339,8 +356,8 @@ export default function DashboardPage() {
                           <Button
                             size="icon-sm"
                             variant="outline"
-                            title={(report.scan_count ?? 1) > 1 ? t.dash.compareTooltip : t.report.compareDisabled}
-                            disabled={(report.scan_count ?? 1) <= 1}
+                            title={canCompare ? t.dash.compareTooltip : t.report.compareDisabled}
+                            disabled={!canCompare}
                             className="text-muted-foreground hover:text-primary hover:border-primary/50 disabled:cursor-not-allowed disabled:opacity-40"
                             onClick={() => navigate(`/compare/${encodeURIComponent(report.domain_name)}`)}
                           >
@@ -374,13 +391,13 @@ export default function DashboardPage() {
 
         {totalPages > 1 && (
           <div className="border-t px-4 py-3 sm:px-6">
-            {/* Mobile: prev / page info / next */}
+            {/* Mobile */}
             <div className="flex items-center justify-between sm:hidden">
               <Button
                 size="sm"
                 variant="outline"
                 className="h-8 px-3 text-xs"
-                onClick={() => setPage(p => Math.max(1, p - 1))}
+                onClick={() => update({ p: String(Math.max(1, currentPage - 1)) })}
                 disabled={currentPage === 1}
               >
                 {t.dash.prevPage}
@@ -392,20 +409,23 @@ export default function DashboardPage() {
                 size="sm"
                 variant="outline"
                 className="h-8 px-3 text-xs"
-                onClick={() => setPage(p => Math.min(totalPages, p + 1))}
+                onClick={() => update({ p: String(Math.min(totalPages, currentPage + 1)) })}
                 disabled={currentPage === totalPages}
               >
                 {t.dash.nextPage}
               </Button>
             </div>
 
-            {/* Desktop: full pagination */}
+            {/* Desktop */}
             <div className="hidden sm:flex items-center justify-between text-xs text-muted-foreground">
               <span>{t.dash.pageInfo(currentPage, totalPages, filtered.length)}</span>
               <Pagination className="w-auto mx-0">
                 <PaginationContent>
                   <PaginationItem>
-                    <PaginationPrevious onClick={() => setPage(p => Math.max(1, p - 1))} disabled={currentPage === 1} />
+                    <PaginationPrevious
+                      onClick={() => update({ p: String(Math.max(1, currentPage - 1)) })}
+                      disabled={currentPage === 1}
+                    />
                   </PaginationItem>
 
                   {Array.from({ length: totalPages }, (_, i) => i + 1)
@@ -420,7 +440,10 @@ export default function DashboardPage() {
                         <PaginationItem key={`e-${idx}`}><PaginationEllipsis /></PaginationItem>
                       ) : (
                         <PaginationItem key={p}>
-                          <PaginationLink isActive={p === currentPage} onClick={() => setPage(p as number)}>
+                          <PaginationLink
+                            isActive={p === currentPage}
+                            onClick={() => update({ p: String(p) })}
+                          >
                             {p}
                           </PaginationLink>
                         </PaginationItem>
@@ -428,7 +451,10 @@ export default function DashboardPage() {
                     )}
 
                   <PaginationItem>
-                    <PaginationNext onClick={() => setPage(p => Math.min(totalPages, p + 1))} disabled={currentPage === totalPages} />
+                    <PaginationNext
+                      onClick={() => update({ p: String(Math.min(totalPages, currentPage + 1)) })}
+                      disabled={currentPage === totalPages}
+                    />
                   </PaginationItem>
                 </PaginationContent>
               </Pagination>

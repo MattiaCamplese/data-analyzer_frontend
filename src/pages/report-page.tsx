@@ -33,6 +33,7 @@ export default function ReportPage() {
     contentRef: printRef,
     documentTitle: report ? `SecureAnalyzer - ${report.domain_name}` : "SecureAnalyzer Report",
     pageStyle: `
+      @page { margin: 20mm; }
       @media print {
         body { -webkit-print-color-adjust: exact; print-color-adjust: exact; background: white; }
         .no-print { display: none !important; }

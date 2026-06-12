@@ -47,15 +47,15 @@ export function RiskGauge({ score, domainName, className }: RiskGaugeProps) {
         <CardDescription>Punteggio di rischio globale</CardDescription>
       </CardHeader>
       <CardContent className="flex flex-col items-center gap-2">
-        <svg viewBox="20 15 200 135" className="w-full max-w-48">
+        <svg viewBox="10 10 220 138" className="w-full max-w-48">
           <path d={trackPath} fill="none" stroke="currentColor" strokeOpacity="0.1" strokeWidth={strokeW} strokeLinecap="round" />
           {valuePath && (
             <path d={valuePath} fill="none" stroke={risk.hex} strokeWidth={strokeW} strokeLinecap="round" />
           )}
-          <text x={cx} y={cy - 18} textAnchor="middle" dominantBaseline="middle" fontSize="40" fontWeight="700" fill="currentColor">
+          <text x={cx} y={cy - 20} textAnchor="middle" dominantBaseline="middle" fontSize="40" fontWeight="700" fill="currentColor">
             {clamped}
           </text>
-          <text x={cx} y={cy + 12} textAnchor="middle" fontSize="11" fontWeight="600" fill={risk.hex} letterSpacing="2">
+          <text x={cx} y={cy + 10} textAnchor="middle" dominantBaseline="hanging" fontSize="11" fontWeight="600" fill={risk.hex} letterSpacing="2">
             {risk.label}
           </text>
         </svg>

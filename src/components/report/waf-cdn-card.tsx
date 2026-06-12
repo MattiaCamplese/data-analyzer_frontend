@@ -29,9 +29,9 @@ function Service({ label, count, assets, icon: Icon, notDetectedLabel, assetLabe
         )}
       </div>
       {active && assets.length > 0 && (
-        <div className="max-h-32 overflow-y-auto rounded-md border bg-muted/40">
+        <div className="rounded-md border bg-muted/40">
           {assets.map((a, i) => (
-            <div key={a} className="flex items-center gap-2 border-b last:border-0 px-2 py-1">
+            <div key={a} className="flex items-center gap-2 border-b last:border-0 px-2 py-1 print:break-inside-avoid">
               <span className="shrink-0 tabular-nums text-[10px] text-muted-foreground w-5 text-right">{i + 1}</span>
               <span className="font-mono text-[11px] text-muted-foreground break-all">{a}</span>
             </div>
