@@ -38,7 +38,7 @@ const router = createBrowserRouter([
 
 createRoot(document.getElementById("root")!).render(
   <StrictMode>
-    <ThemeProvider>
+    <ThemeProvider defaultTheme="dark">
       <TooltipProvider>
         <QueryClientProvider client={client}>
           <RouterProvider router={router} />

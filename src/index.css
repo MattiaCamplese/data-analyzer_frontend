@@ -50,7 +50,7 @@
 
 /* ── Light ──────────────────────────────────────────────── */
 :root {
-    --background: oklch(1 0 0);
+    --background: oklch(0.93 0.003 286.375);
     --foreground: oklch(0.141 0.005 285.823);
     --card: oklch(1 0 0);
     --card-foreground: oklch(0.141 0.005 285.823);
@@ -84,14 +84,14 @@
 
     --radius: 0.5rem;
 
-    --sidebar: oklch(0.985 0.001 286.375);
-    --sidebar-foreground: oklch(0.141 0.005 285.823);
-    --sidebar-primary: oklch(0.546 0.245 262.881);
+    --sidebar: oklch(0.17 0.004 285);
+    --sidebar-foreground: oklch(0.92 0.004 286);
+    --sidebar-primary: oklch(0.623 0.214 259.815);
     --sidebar-primary-foreground: oklch(0.985 0.002 247.839);
-    --sidebar-accent: oklch(0.967 0.001 286.375);
-    --sidebar-accent-foreground: oklch(0.21 0.006 285.885);
-    --sidebar-border: oklch(0.92 0.004 286.32);
-    --sidebar-ring: oklch(0.546 0.245 262.881);
+    --sidebar-accent: oklch(0.25 0.005 285);
+    --sidebar-accent-foreground: oklch(0.97 0.002 286);
+    --sidebar-border: oklch(0.27 0.005 285);
+    --sidebar-ring: oklch(0.623 0.214 259.815);
 }
 
 /* ── Dark ───────────────────────────────────────────────── */

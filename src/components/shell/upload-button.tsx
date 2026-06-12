@@ -46,7 +46,7 @@ export function UploadButton() {
   return (
     <>
       <input ref={fileInputRef} type="file" accept=".json,application/json" className="hidden" onChange={handleFile}/>
-      <Button className="bg-blue-700" variant="outline" size="sm" disabled={isPending} onClick={() => fileInputRef.current?.click()}>
+      <Button variant="outline" size="sm" disabled={isPending} onClick={() => fileInputRef.current?.click()}>
         {isPending ? (
           <Loader2 className="size-3.5 animate-spin" />
         ) : (
