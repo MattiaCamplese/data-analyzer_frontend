@@ -38,7 +38,7 @@ export async function fetchReports(params?: {
 // ── Singolo report ─────────────────────────────────────────
 export async function fetchReport(id: string): Promise<SecurityReport> {
   if (isMock) {
-    const report = mockReports.find((r) => r.idsummary === id)
+    const report = mockReports.find((r) => r.idsummary === id || r.domain_name === id)
     if (!report) throw new Error(`Report "${id}" not found`)
     return report
   }

@@ -1,19 +1,18 @@
 import { Bell, LogOut, Trash2, Sun, Moon } from "lucide-react";
 import { useNavigate, useLocation } from "react-router-dom";
 import { useRef, useState, useEffect } from "react";
-import { useQueryClient } from "@tanstack/react-query";
 import { RiShieldCheckLine, RiDashboardLine } from "@remixicon/react";
 import { Separator } from "@/components/ui/separator";
 import { useAuthStore } from "@/features/auth/auth.store";
 import { useNotificationsStore } from "@/features/notifications/notifications.store";
 import { useTheme } from "@/components/theme-provider";
 import { AppBreadcrumbs } from "@/components/shell/app-breadcrumbs";
-import type { SecurityReport } from "@/types/report";
 
 function useBreadcrumb() {
   const { pathname } = useLocation();
   if (pathname.startsWith("/report/")) {
-    return { title: "Report di Sicurezza", icon: <RiShieldCheckLine /> };
+    const domain = decodeURIComponent(pathname.split("/report/")[1]);
+    return { title: domain, icon: <RiShieldCheckLine /> };
   }
   return { title: "Dashboard", icon: <RiDashboardLine /> };
 }
@@ -30,7 +29,6 @@ export function AppHeader() {
   const page = useBreadcrumb();
   const logout = useAuthStore((s) => s.logout);
   const navigate = useNavigate();
-  const queryClient = useQueryClient();
   const notifications = useNotificationsStore((s) => s.notifications);
   const markAllRead = useNotificationsStore((s) => s.markAllRead);
   const clear = useNotificationsStore((s) => s.clear);
@@ -59,12 +57,8 @@ export function AppHeader() {
   }
 
   function handleNotificationClick(domainName: string) {
-    const cached = queryClient.getQueryData<{ items: SecurityReport[] }>(["reports", ""]);
-    const report = cached?.items.find((r) => r.domain_name === domainName);
-    if (report) {
-      navigate(`/report/${report.idsummary}`);
-      setOpen(false);
-    }
+    navigate(`/report/${domainName}`);
+    setOpen(false);
   }
 
   function handleLogout() {

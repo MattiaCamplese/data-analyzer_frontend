@@ -292,7 +292,7 @@ export default function DashboardPage() {
                     <TableRow
                       key={report.idsummary}
                       className="cursor-pointer hover:bg-muted/50"
-                      onClick={() => navigate(`/report/${report.idsummary}`)}
+                      onClick={() => navigate(`/report/${report.domain_name}`)}
                     >
                       <TableCell className="pl-6 min-w-0 max-w-35 sm:max-w-none">
                         <div className="flex items-center gap-2 min-w-0">
