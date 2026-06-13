@@ -1,7 +1,7 @@
 import { useMemo } from "react";
 import { useNavigate } from "react-router-dom";
 import { TrendingUp, TrendingDown, ArrowRight } from "lucide-react";
-import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
+import { Card, CardContent } from "@/components/ui/card";
 import { useAllReports } from "@/hooks/use-reports";
 import { getRiskInfo } from "@/lib/risk-utils";
 import { cn } from "@/lib/utils";
@@ -79,13 +79,13 @@ function DomainRow({ rank, item }: { rank: number; item: DomainDelta }) {
 
 function EmptyState({ message }: { message: string }) {
   return (
-    <p className="px-3 py-4 text-center text-xs text-muted-foreground">{message}</p>
+    <p className="px-3 py-6 text-center text-xs text-muted-foreground">{message}</p>
   );
 }
 
 export function TopDomainsChange() {
   const t = useT();
-  const { data: result } = useAllReports();
+  const { data: result, isLoading } = useAllReports();
   const reports = result?.items ?? [];
 
   const { worsened, improved } = useMemo(() => {
@@ -98,47 +98,62 @@ export function TopDomainsChange() {
 
   const noData = reports.length > 0 && worsened.length === 0 && improved.length === 0;
 
-  return (
-    <div className="grid gap-4 md:grid-cols-2">
-      {/* Peggiorati */}
+  if (isLoading) {
+    return (
       <Card className="shadow-none dark:ring-0">
-        <CardHeader className="pb-2">
-          <CardTitle className="flex items-center gap-2 text-xs font-medium uppercase tracking-wide text-muted-foreground">
-            <TrendingUp className="size-3.5 text-destructive" />
-            {t.dash.topWorsened}
-          </CardTitle>
-        </CardHeader>
-        <CardContent className="p-2">
-          {worsened.length === 0 ? (
-            <EmptyState message={noData ? t.dash.topNoChange : t.dash.topNeedScans} />
-          ) : (
-            <>
-              <ColumnHeader />
-              {worsened.map((item, i) => <DomainRow key={item.domain} rank={i + 1} item={item} />)}
-            </>
-          )}
+        <CardContent className="flex flex-col items-center justify-center gap-4 py-12">
+          <div className="relative size-10">
+            <div className="absolute inset-0 rounded-full border-4 border-muted" />
+            <div className="absolute inset-0 rounded-full border-4 border-primary border-t-transparent animate-spin" />
+          </div>
         </CardContent>
       </Card>
+    );
+  }
 
-      {/* Migliorati */}
-      <Card className="shadow-none dark:ring-0">
-        <CardHeader className="pb-2">
-          <CardTitle className="flex items-center gap-2 text-xs font-medium uppercase tracking-wide text-muted-foreground">
-            <TrendingDown className="size-3.5 text-green-500" />
-            {t.dash.topImproved}
-          </CardTitle>
-        </CardHeader>
-        <CardContent className="p-2">
-          {improved.length === 0 ? (
-            <EmptyState message={noData ? t.dash.topNoChange : t.dash.topNeedScans} />
-          ) : (
-            <>
-              <ColumnHeader />
-              {improved.map((item, i) => <DomainRow key={item.domain} rank={i + 1} item={item} />)}
-            </>
-          )}
-        </CardContent>
-      </Card>
-    </div>
+  return (
+    <Card className="shadow-none dark:ring-0">
+      <CardContent className="p-0">
+        <div className="grid grid-cols-1 sm:grid-cols-2 divide-y sm:divide-y-0 sm:divide-x">
+
+          {/* Peggiorati */}
+          <div className="p-2">
+            <div className="flex items-center gap-2 px-3 py-2">
+              <TrendingUp className="size-3.5 text-destructive" />
+              <span className="text-xs font-medium uppercase tracking-wide text-muted-foreground">
+                {t.dash.topWorsened}
+              </span>
+            </div>
+            {worsened.length === 0 ? (
+              <EmptyState message={noData ? t.dash.topNoChange : t.dash.topNeedScans} />
+            ) : (
+              <>
+                <ColumnHeader />
+                {worsened.map((item, i) => <DomainRow key={item.domain} rank={i + 1} item={item} />)}
+              </>
+            )}
+          </div>
+
+          {/* Migliorati */}
+          <div className="p-2">
+            <div className="flex items-center gap-2 px-3 py-2">
+              <TrendingDown className="size-3.5 text-green-500" />
+              <span className="text-xs font-medium uppercase tracking-wide text-muted-foreground">
+                {t.dash.topImproved}
+              </span>
+            </div>
+            {improved.length === 0 ? (
+              <EmptyState message={noData ? t.dash.topNoChange : t.dash.topNeedScans} />
+            ) : (
+              <>
+                <ColumnHeader />
+                {improved.map((item, i) => <DomainRow key={item.domain} rank={i + 1} item={item} />)}
+              </>
+            )}
+          </div>
+
+        </div>
+      </CardContent>
+    </Card>
   );
 }

@@ -75,6 +75,13 @@ const it = {
     dateLoadingSub:   "Ricerca record per la data selezionata…",
   },
 
+  // ── 404 ───────────────────────────────────────────────────
+  notFound: {
+    title:       "Pagina non trovata",
+    description: "La pagina che cerchi non esiste o è stata spostata.",
+    back:        "Torna alla dashboard",
+  },
+
   // ── report ────────────────────────────────────────────────
   report: {
     notFound:       "Report non trovato.",
@@ -261,6 +268,12 @@ const en: typeof it = {
     dateFilterClear:  "Remove date filter",
     dateLoading:      "Loading domains",
     dateLoadingSub:   "Searching records for the selected date…",
+  },
+
+  notFound: {
+    title:       "Page not found",
+    description: "The page you're looking for doesn't exist or has been moved.",
+    back:        "Back to dashboard",
   },
 
   report: {

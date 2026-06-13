@@ -11,6 +11,7 @@ import DashboardPage from "./pages/dashboard-page"
 import ReportPage from "./pages/report-page"
 import ComparePage from "./pages/compare-page"
 import LoginPage from "./pages/login-page"
+import NotFoundPage from "./pages/not-found-page"
 import ProtectedRoute from "./components/shell/protected-route"
 
 const client = new QueryClient({
@@ -45,6 +46,10 @@ const router = createBrowserRouter([
           {
             path: "/compare/:domain",
             element: <ComparePage />,
+          },
+          {
+            path: "*",
+            element: <NotFoundPage />,
           },
         ],
       },

@@ -404,8 +404,12 @@ export default function ComparePage() {
 
       {/* Loading */}
       {isLoading && (
-        <div className="rounded-lg border p-10 text-center text-sm text-muted-foreground animate-pulse">
-          {t.cmp.loading}
+        <div className="flex flex-col items-center justify-center gap-4 rounded-lg border py-16">
+          <div className="relative size-12">
+            <div className="absolute inset-0 rounded-full border-4 border-muted" />
+            <div className="absolute inset-0 rounded-full border-4 border-primary border-t-transparent animate-spin" />
+          </div>
+          <span className="text-sm text-muted-foreground">{t.cmp.loading}</span>
         </div>
       )}
 
