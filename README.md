@@ -30,7 +30,7 @@ Piattaforma di analisi della sicurezza dei domini, costruita con React, TypeScri
 - **Paginazione** con ellissi per dataset grandi
 - Filtri, ordinamento e pagina corrente sopravvivono al refresh della pagina (stato gestito tramite URL con `useSearchParams`)
 - Card di riepilogo: totale domini, risk score medio, domini ad alto rischio, domini critici
-- Grafico dell'andamento del risk score globale (ultimi 30 giorni), mockup (facile implementare in un futuro con dati reali, analizzati per rischio giornaliero)
+- Grafico dell'andamento del risk score globale (ultimi 30 giorni)
 - Icona di stato accanto al nome del dominio per scansioni in stato `error` o `pending`
 
 ### Pagina report
