@@ -10,6 +10,16 @@ export function useReports(search?: string) {
   })
 }
 
+export function useReportsByDate(date: string) {
+  return useQuery({
+    queryKey: ["reports-by-date", date],
+    queryFn: () => fetchReports({ date, latest: false }),
+    enabled: !!date,
+    staleTime: 0,
+    gcTime: 0,
+  })
+}
+
 export function useAllReports() {
   return useQuery({
     queryKey: ["reports-all"],

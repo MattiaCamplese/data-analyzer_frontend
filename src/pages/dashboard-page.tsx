@@ -1,8 +1,10 @@
 import { useState, useRef, useEffect } from "react";
 import { useNavigate, useSearchParams } from "react-router-dom";
-import { Search, Globe, TrendingUp, AlertTriangle, ShieldCheck, Trash2, SlidersHorizontal, ArrowUp, ArrowDown, ChevronsUpDown, GitCompare, AlertCircle, Clock } from "lucide-react";
+import { Search, Globe, TrendingUp, AlertTriangle, ShieldCheck, Trash2, SlidersHorizontal, ArrowUp, ArrowDown, ChevronsUpDown, GitCompare, AlertCircle, Clock, CalendarDays, X } from "lucide-react";
+import { Popover, PopoverContent, PopoverTrigger } from "@/components/ui/popover";
+import { Calendar } from "@/components/ui/calendar";
 import { toast } from "sonner";
-import { useReports, useDeleteReport } from "@/hooks/use-reports";
+import { useReports, useReportsByDate, useDeleteReport } from "@/hooks/use-reports";
 import { getRiskInfo, formatDate } from "@/lib/risk-utils";
 import { cn } from "@/lib/utils";
 import { DashboardSkeleton } from "@/components/shell/dashboard-skeleton";
@@ -12,7 +14,9 @@ import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from "@/components/ui/table";
 import { Pagination, PaginationContent, PaginationEllipsis, PaginationItem, PaginationLink, PaginationNext, PaginationPrevious } from "@/components/ui/pagination";
 import { RiskTrendChart } from "@/components/dashboard/risk-trend-chart";
+import { TopDomainsChange } from "@/components/dashboard/top-domains-change";
 import { useT } from "@/hooks/use-t";
+import { useDashboardFilters } from "@/features/dashboard/dashboard-filters.store";
 
 const RISK_LEVEL_KEYS = [
   { key: "critical" as const, test: (s: number) => s > 80 },
@@ -27,8 +31,6 @@ export default function DashboardPage() {
   const [searchParams, setSearchParams] = useSearchParams();
   const filterRef = useRef<HTMLDivElement>(null);
   const navigate = useNavigate();
-  const { data: result, isLoading, isError } = useReports();
-  const { mutate: deleteReport, isPending: isDeleting } = useDeleteReport();
 
   // ── state from URL (persisted on refresh) ──────────────────
   const page        = Math.max(1, parseInt(searchParams.get("p") ?? "1", 10));
@@ -39,6 +41,16 @@ export default function DashboardPage() {
 
   // ── local UI state (not persisted) ──────────────────────────
   const [filterOpen, setFilterOpen] = useState(false);
+  const dateFilter = useDashboardFilters((s) => s.dateFilter);
+  const setDateFilter = useDashboardFilters((s) => s.setDateFilter);
+  const clearDateFilter = useDashboardFilters((s) => s.clearDateFilter);
+
+  // Stat cards e grafici usano sempre i dati latest (non filtrati per data)
+  const { data: latestResult, isLoading, isError } = useReports();
+  // La tabella usa i dati filtrati per data quando dateFilter è attivo
+  const { data: dateResult, isFetching: dateFetching } = useReportsByDate(dateFilter);
+  const result = dateFilter ? dateResult : latestResult;
+  const { mutate: deleteReport, isPending: isDeleting } = useDeleteReport();
 
   function update(patch: Record<string, string | null>, resetPage = false) {
     setSearchParams(prev => {
@@ -64,7 +76,7 @@ export default function DashboardPage() {
     return () => document.removeEventListener("mousedown", handleClick);
   }, [filterOpen]);
 
-  function toggleRisk(key: string) {
+function toggleRisk(key: string) {
     const next = riskFilters.includes(key)
       ? riskFilters.filter((k) => k !== key)
       : [...riskFilters, key];
@@ -87,6 +99,9 @@ export default function DashboardPage() {
 
   const activeFilterCount = riskFilters.length;
 
+  // Stat cards sempre basate sui dati latest (non cambiano col filtro data)
+  const latestReports = latestResult?.items ?? [];
+  // Tabella usa i dati del filtro data (o latest se non c'è filtro)
   const reports = result?.items ?? [];
   let filtered = search
     ? reports.filter((r) => r.domain_name.toLowerCase().includes(search.toLowerCase()))
@@ -98,7 +113,7 @@ export default function DashboardPage() {
     );
   }
 
-  if (sortCol) {
+if (sortCol) {
     filtered = [...filtered].sort((a, b) => {
       let va: number | string, vb: number | string;
       switch (sortCol) {
@@ -127,11 +142,11 @@ export default function DashboardPage() {
   const currentPage = Math.min(page, totalPages);
   const paginated   = filtered.slice((currentPage - 1) * PER_PAGE, currentPage * PER_PAGE);
 
-  const avgRisk = reports.length
-    ? Math.round(reports.reduce((s, r) => s + r.risk_score, 0) / reports.length)
+  const avgRisk = latestReports.length
+    ? Math.round(latestReports.reduce((s, r) => s + r.risk_score, 0) / latestReports.length)
     : 0;
-  const highRisk = reports.filter((r) => r.risk_score > 60).length;
-  const critical  = reports.filter((r) => r.risk_score > 80).length;
+  const highRisk = latestReports.filter((r) => r.risk_score > 60).length;
+  const critical  = latestReports.filter((r) => r.risk_score > 80).length;
 
   if (isLoading) return <DashboardSkeleton />;
 
@@ -179,6 +194,8 @@ export default function DashboardPage() {
 
       {/* Risk trend chart */}
       <RiskTrendChart />
+
+      <TopDomainsChange />
 
       {/* Tabella domini */}
       <Card className="shadow-none dark:ring-0 gap-0">
@@ -239,6 +256,54 @@ export default function DashboardPage() {
                 )}
               </div>
 
+              {/* Date picker */}
+              <Popover>
+                <PopoverTrigger asChild>
+                  <Button
+                    size="sm"
+                    variant="outline"
+                    className={cn("h-8 gap-1.5", dateFilter && "border-primary text-primary")}
+                  >
+                    <CalendarDays className="size-3.5" />
+                    {dateFilter ? (
+                      <span className="text-xs tabular-nums">{dateFilter}</span>
+                    ) : (
+                      <span className="hidden sm:inline text-xs">{t.dash.dateLabel}</span>
+                    )}
+                    {dateFilter && (
+                      <span
+                        role="button"
+                        className="ml-0.5 rounded-full hover:bg-muted p-0.5"
+                        onClick={(e) => { e.stopPropagation(); clearDateFilter(); }}
+                      >
+                        <X className="size-3" />
+                      </span>
+                    )}
+                  </Button>
+                </PopoverTrigger>
+                <PopoverContent className="w-auto p-0" align="end">
+                  <Calendar
+                    mode="single"
+                    selected={dateFilter ? new Date(dateFilter + "T12:00:00") : undefined}
+                    onSelect={(day) => {
+                      if (!day) { clearDateFilter(); return; }
+                      const local = `${day.getFullYear()}-${String(day.getMonth() + 1).padStart(2, "0")}-${String(day.getDate()).padStart(2, "0")}`;
+                      setDateFilter(local);
+                    }}
+                  />
+                  {dateFilter && (
+                    <div className="border-t px-3 pb-3">
+                      <button
+                        className="mt-2 w-full rounded px-2 py-1 text-xs text-destructive hover:bg-destructive/10"
+                        onClick={() => clearDateFilter()}
+                      >
+                        Rimuovi filtro data
+                      </button>
+                    </div>
+                  )}
+                </PopoverContent>
+              </Popover>
+
               <div className="relative">
                 <Search className="absolute left-3 top-1/2 size-3.5 -translate-y-1/2 text-muted-foreground" />
                 <input
@@ -295,7 +360,22 @@ export default function DashboardPage() {
               </TableRow>
             </TableHeader>
             <TableBody>
-              {paginated.length === 0 ? (
+              {dateFetching ? (
+                <TableRow className="pointer-events-none hover:bg-transparent">
+                  <TableCell colSpan={8} className="h-143 text-center align-middle">
+                    <div className="flex flex-col items-center justify-center gap-4">
+                      <div className="relative size-12">
+                        <div className="absolute inset-0 rounded-full border-4 border-muted" />
+                        <div className="absolute inset-0 rounded-full border-4 border-primary border-t-transparent animate-spin" />
+                      </div>
+                      <div className="flex flex-col items-center gap-1">
+                        <span className="text-sm font-medium">Caricamento domini</span>
+                        <span className="text-xs text-muted-foreground">Ricerca record per la data selezionata…</span>
+                      </div>
+                    </div>
+                  </TableCell>
+                </TableRow>
+              ) : paginated.length === 0 ? (
                 <TableRow>
                   <TableCell colSpan={8} className="py-12 text-center text-muted-foreground">
                     {t.dash.noResults}
@@ -349,7 +429,7 @@ export default function DashboardPage() {
                       <TableCell className="hidden md:table-cell tabular-nums">{totalLeaks.toLocaleString("it-IT")}</TableCell>
                       <TableCell className="hidden lg:table-cell">
                         {report.waf.count > 0 ? (
-                          <span className="text-xs text-green-600 dark:text-green-400 font-medium">{report.waf.count} asset</span>
+                          <span className="text-xs font-medium">{report.waf.count} asset</span>
                         ) : (
                           <span className="text-xs text-muted-foreground">{t.dash.wafNone}</span>
                         )}

@@ -63,6 +63,16 @@ const it = {
     compareTooltip: "Confronta scansioni storiche",
     statusPending:  "Scansione in elaborazione",
     statusError:    "Errore nella scansione",
+    topWorsened:      "Top 10 peggiorati",
+    topImproved:      "Top 10 migliorati",
+    topNoChange:      "Nessuna variazione rilevata",
+    topNeedScans:     "Servono ≥ 2 scansioni per dominio",
+    topDailyChange:   "Variazione giornaliera",
+    dateLabel:        "Data",
+    dateFilterTitle:  "Filtra per data",
+    dateFilterClear:  "Rimuovi filtro data",
+    dateLoading:      "Caricamento domini",
+    dateLoadingSub:   "Ricerca record per la data selezionata…",
   },
 
   // ── report ────────────────────────────────────────────────
@@ -241,6 +251,16 @@ const en: typeof it = {
     compareTooltip: "Compare historical scans",
     statusPending:  "Scan in progress",
     statusError:    "Scan error",
+    topWorsened:      "Top 10 worsened",
+    topImproved:      "Top 10 improved",
+    topNoChange:      "No changes detected",
+    topNeedScans:     "Requires ≥ 2 scans per domain",
+    topDailyChange:   "Daily change",
+    dateLabel:        "Date",
+    dateFilterTitle:  "Filter by date",
+    dateFilterClear:  "Remove date filter",
+    dateLoading:      "Loading domains",
+    dateLoadingSub:   "Searching records for the selected date…",
   },
 
   report: {

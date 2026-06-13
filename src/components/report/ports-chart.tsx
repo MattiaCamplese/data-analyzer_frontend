@@ -18,12 +18,12 @@ export function PortsChart({ nPort }: PortsChartProps) {
     .map(([port, val]) => ({ port: `:${port}`, count: val.n }));
 
   return (
-    <Card className="shadow-none dark:ring-0">
+    <Card className="shadow-none dark:ring-0 overflow-hidden">
       <CardHeader>
         <CardTitle className="text-sm">Porte Aperte</CardTitle>
         <CardDescription>Numero di esposizioni per porta</CardDescription>
       </CardHeader>
-      <CardContent>
+      <CardContent className="min-w-0">
         <ChartContainer config={chartConfig} className="h-52 w-full">
           <BarChart data={data} layout="vertical" margin={{ left: 8, right: 8 }}>
             <CartesianGrid horizontal={false} className="stroke-border" />

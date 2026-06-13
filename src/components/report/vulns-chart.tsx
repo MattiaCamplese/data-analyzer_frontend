@@ -34,16 +34,16 @@ export function VulnsChart({ nVulns }: VulnsChartProps) {
   const passiveTotal = passiveData.reduce((s, d) => s + d.value, 0);
 
   return (
-    <Card className="shadow-none dark:ring-0">
+    <Card className="shadow-none dark:ring-0 overflow-hidden">
       <CardHeader>
         <CardTitle className="text-sm">Vulnerabilità</CardTitle>
         <CardDescription>Attive e passive per gravità</CardDescription>
       </CardHeader>
-      <CardContent>
+      <CardContent className="min-w-0">
         <div className="flex items-center justify-around gap-4">
           {/* Attive */}
-          <div className="flex flex-col items-center gap-1">
-            <ChartContainer config={chartConfig} className="h-36 w-36">
+          <div className="flex min-w-0 flex-col items-center gap-1">
+            <ChartContainer config={chartConfig} className="h-36 w-36 max-w-[calc(50vw-3rem)]">
               <PieChart>
                 <ChartTooltip content={<ChartTooltipContent nameKey="label" hideIndicator={false} />} />
                 <Pie data={activeData} dataKey="value" innerRadius={36} outerRadius={58} paddingAngle={2}>
@@ -57,8 +57,8 @@ export function VulnsChart({ nVulns }: VulnsChartProps) {
           </div>
 
           {/* Passive */}
-          <div className="flex flex-col items-center gap-1">
-            <ChartContainer config={chartConfig} className="h-36 w-36">
+          <div className="flex min-w-0 flex-col items-center gap-1">
+            <ChartContainer config={chartConfig} className="h-36 w-36 max-w-[calc(50vw-3rem)]">
               <PieChart>
                 <ChartTooltip content={<ChartTooltipContent nameKey="label" hideIndicator={false} />} />
                 <Pie data={passiveData} dataKey="value" innerRadius={36} outerRadius={58} paddingAngle={2}>

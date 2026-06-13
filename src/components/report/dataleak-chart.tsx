@@ -38,7 +38,7 @@ export function DataLeakChart({ nDataleak }: DataLeakChartProps) {
   const totalAll = Object.values(nDataleak.total).reduce((s, v) => s + v, 0);
 
   return (
-    <Card className="shadow-none dark:ring-0">
+    <Card className="shadow-none dark:ring-0 overflow-hidden">
       <CardHeader>
         <CardTitle className="text-sm">Data Leak</CardTitle>
         <CardDescription>
@@ -48,7 +48,7 @@ export function DataLeakChart({ nDataleak }: DataLeakChartProps) {
           {nDataleak.enumeration > 0 && ` · ${nDataleak.enumeration} enumerazione`}
         </CardDescription>
       </CardHeader>
-      <CardContent>
+      <CardContent className="min-w-0">
         {data.length === 0 ? (
           <p className="py-8 text-center text-sm text-muted-foreground">Nessun dato</p>
         ) : (
@@ -62,8 +62,8 @@ export function DataLeakChart({ nDataleak }: DataLeakChartProps) {
                 axisLine={false}
                 tickLine={false}
                 tickMargin={8}
-                width={110}
-                tick={{ fontSize: 11 }}
+                width={90}
+                tick={{ fontSize: 10 }}
               />
               <ChartTooltip content={<ChartTooltipContent />} cursor={false} />
               <Bar dataKey="value" radius={4}>

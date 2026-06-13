@@ -13,6 +13,7 @@ function authHeader(): HeadersInit {
 // ── Lista report ───────────────────────────────────────────
 export async function fetchReports(params?: {
   search?: string
+  date?: string
   page?: number
   perPage?: number
   latest?: boolean
@@ -25,6 +26,9 @@ export async function fetchReports(params?: {
         items = items.filter((r) =>
           r.domain_name.toLowerCase().includes(params.search!.toLowerCase()),
         )
+      }
+      if (params?.date) {
+        items = items.filter((r) => (r.creation_date ?? "").slice(0, 10) === params.date)
       }
       return { items, totalItems: items.length, totalPages: 1 }
     }
@@ -48,12 +52,16 @@ export async function fetchReports(params?: {
         r.domain_name.toLowerCase().includes(params.search!.toLowerCase()),
       )
     }
+    if (params?.date) {
+      items = items.filter((r) => (r.creation_date ?? "").slice(0, 10) === params.date)
+    }
     return { items, totalItems: items.length, totalPages: 1 }
   }
 
   const url = new URL(`${BASE_URL}/api/summaries`)
   url.searchParams.set("latest", String(params?.latest ?? true))
   if (params?.search)   url.searchParams.set("search",  params.search)
+  if (params?.date)     url.searchParams.set("date",    params.date)
   if (params?.page)     url.searchParams.set("page",    String(params.page))
   if (params?.perPage)  url.searchParams.set("perPage", String(params.perPage))
 
