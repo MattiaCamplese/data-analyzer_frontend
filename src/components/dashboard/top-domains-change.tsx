@@ -94,7 +94,7 @@ export function TopDomainsChange() {
       worsened: deltas.filter(d => d.delta > 0).sort((a, b) => b.delta - a.delta).slice(0, 10),
       improved: deltas.filter(d => d.delta < 0).sort((a, b) => a.delta - b.delta).slice(0, 10),
     };
-  }, [reports.length]);
+  }, [reports]);
 
   const noData = reports.length > 0 && worsened.length === 0 && improved.length === 0;
 

@@ -1,4 +1,4 @@
-import { useState, useRef, useEffect } from "react";
+import { useState, useMemo } from "react";
 import { useNavigate, useSearchParams } from "react-router-dom";
 import { Search, Globe, TrendingUp, AlertTriangle, ShieldCheck, Trash2, SlidersHorizontal, ArrowUp, ArrowDown, ChevronsUpDown, GitCompare, AlertCircle, Clock, CalendarDays, X } from "lucide-react";
 import { Popover, PopoverContent, PopoverTrigger } from "@/components/ui/popover";
@@ -16,7 +16,10 @@ import { Pagination, PaginationContent, PaginationEllipsis, PaginationItem, Pagi
 import { RiskTrendChart } from "@/components/dashboard/risk-trend-chart";
 import { TopDomainsChange } from "@/components/dashboard/top-domains-change";
 import { useT } from "@/hooks/use-t";
+import { useLangStore } from "@/features/lang/lang.store";
 import { useDashboardFilters } from "@/features/dashboard/dashboard-filters.store";
+
+const PER_PAGE = 10;
 
 const RISK_LEVEL_KEYS = [
   { key: "critical" as const, test: (s: number) => s > 80 },
@@ -25,11 +28,15 @@ const RISK_LEVEL_KEYS = [
   { key: "low"      as const, test: (s: number) => s <= 30 },
 ];
 
+function SortIcon({ col, sortCol, sortDir }: { col: string; sortCol: string | null; sortDir: "asc" | "desc" }) {
+  if (sortCol !== col) return <ChevronsUpDown className="size-3 opacity-30" />;
+  return sortDir === "asc" ? <ArrowUp className="size-3" /> : <ArrowDown className="size-3" />;
+}
+
 export default function DashboardPage() {
   const t = useT();
-  const PER_PAGE = 10;
+  const lang = useLangStore((s) => s.lang);
   const [searchParams, setSearchParams] = useSearchParams();
-  const filterRef = useRef<HTMLDivElement>(null);
   const navigate = useNavigate();
 
   // ── state from URL (persisted on refresh) ──────────────────
@@ -39,9 +46,9 @@ export default function DashboardPage() {
   const sortCol     = searchParams.get("sort") ?? null;
   const sortDir     = (searchParams.get("dir") as "asc" | "desc") || "asc";
 
-  // ── local UI state (not persisted) ──────────────────────────
+  // ── local UI state ──────────────────────────────────────────
   const [filterOpen, setFilterOpen] = useState(false);
-  const dateFilter = useDashboardFilters((s) => s.dateFilter);
+  const dateFilter    = useDashboardFilters((s) => s.dateFilter);
   const setDateFilter = useDashboardFilters((s) => s.setDateFilter);
   const clearDateFilter = useDashboardFilters((s) => s.clearDateFilter);
 
@@ -64,19 +71,7 @@ export default function DashboardPage() {
     });
   }
 
-  // Close filter dropdown when clicking outside
-  useEffect(() => {
-    if (!filterOpen) return;
-    function handleClick(e: MouseEvent) {
-      if (filterRef.current && !filterRef.current.contains(e.target as Node)) {
-        setFilterOpen(false);
-      }
-    }
-    document.addEventListener("mousedown", handleClick);
-    return () => document.removeEventListener("mousedown", handleClick);
-  }, [filterOpen]);
-
-function toggleRisk(key: string) {
+  function toggleRisk(key: string) {
     const next = riskFilters.includes(key)
       ? riskFilters.filter((k) => k !== key)
       : [...riskFilters, key];
@@ -92,57 +87,57 @@ function toggleRisk(key: string) {
     }
   }
 
-  const SortIcon = ({ col }: { col: string }) => {
-    if (sortCol !== col) return <ChevronsUpDown className="size-3 opacity-30" />;
-    return sortDir === "asc" ? <ArrowUp className="size-3" /> : <ArrowDown className="size-3" />;
-  };
-
   const activeFilterCount = riskFilters.length;
 
   // Stat cards sempre basate sui dati latest (non cambiano col filtro data)
   const latestReports = latestResult?.items ?? [];
   // Tabella usa i dati del filtro data (o latest se non c'è filtro)
   const reports = result?.items ?? [];
-  let filtered = search
-    ? reports.filter((r) => r.domain_name.toLowerCase().includes(search.toLowerCase()))
-    : reports;
 
-  if (riskFilters.length > 0) {
-    filtered = filtered.filter((r) =>
-      riskFilters.some((key) => RISK_LEVEL_KEYS.find((l) => l.key === key)?.test(r.risk_score))
-    );
-  }
+  const filtered = useMemo(() => {
+    let items = search
+      ? reports.filter((r) => r.domain_name.toLowerCase().includes(search.toLowerCase()))
+      : reports;
 
-if (sortCol) {
-    filtered = [...filtered].sort((a, b) => {
-      let va: number | string, vb: number | string;
-      switch (sortCol) {
-        case "domain": va = a.domain_name; vb = b.domain_name; break;
-        case "risk":   va = a.risk_score;  vb = b.risk_score;  break;
-        case "asset":  va = a.n_asset;     vb = b.n_asset;     break;
-        case "vulns":
-          va = Object.values(a.n_vulns.active).reduce((s, v) => s + (v ?? 0), 0) + Object.values(a.n_vulns.passive).reduce((s, v) => s + (v ?? 0), 0);
-          vb = Object.values(b.n_vulns.active).reduce((s, v) => s + (v ?? 0), 0) + Object.values(b.n_vulns.passive).reduce((s, v) => s + (v ?? 0), 0);
-          break;
-        case "leak":
-          va = Object.values(a.n_dataleak.total).reduce((s, v) => s + v, 0);
-          vb = Object.values(b.n_dataleak.total).reduce((s, v) => s + v, 0);
-          break;
-        case "waf":  va = a.waf.count; vb = b.waf.count; break;
-        case "date": va = new Date(a.creation_date).getTime(); vb = new Date(b.creation_date).getTime(); break;
-        default: return 0;
-      }
-      if (va < vb) return sortDir === "asc" ? -1 : 1;
-      if (va > vb) return sortDir === "asc" ? 1 : -1;
-      return 0;
-    });
-  }
+    if (riskFilters.length > 0) {
+      items = items.filter((r) =>
+        riskFilters.some((key) => RISK_LEVEL_KEYS.find((l) => l.key === key)?.test(r.risk_score))
+      );
+    }
+
+    if (sortCol) {
+      items = [...items].sort((a, b) => {
+        let va: number | string, vb: number | string;
+        switch (sortCol) {
+          case "domain": va = a.domain_name; vb = b.domain_name; break;
+          case "risk":   va = a.risk_score;  vb = b.risk_score;  break;
+          case "asset":  va = a.n_asset;     vb = b.n_asset;     break;
+          case "vulns":
+            va = Object.values(a.n_vulns.active).reduce((s, v) => s + (v ?? 0), 0) + Object.values(a.n_vulns.passive).reduce((s, v) => s + (v ?? 0), 0);
+            vb = Object.values(b.n_vulns.active).reduce((s, v) => s + (v ?? 0), 0) + Object.values(b.n_vulns.passive).reduce((s, v) => s + (v ?? 0), 0);
+            break;
+          case "leak":
+            va = Object.values(a.n_dataleak.total).reduce((s, v) => s + v, 0);
+            vb = Object.values(b.n_dataleak.total).reduce((s, v) => s + v, 0);
+            break;
+          case "waf":  va = a.waf.count; vb = b.waf.count; break;
+          case "date": va = new Date(a.creation_date).getTime(); vb = new Date(b.creation_date).getTime(); break;
+          default: return 0;
+        }
+        if (va < vb) return sortDir === "asc" ? -1 : 1;
+        if (va > vb) return sortDir === "asc" ? 1 : -1;
+        return 0;
+      });
+    }
+
+    return items;
+  }, [reports, search, riskFilters, sortCol, sortDir]);
 
   const totalPages  = Math.max(1, Math.ceil(filtered.length / PER_PAGE));
   const currentPage = Math.min(page, totalPages);
   const paginated   = filtered.slice((currentPage - 1) * PER_PAGE, currentPage * PER_PAGE);
 
-  const avgRisk = latestReports.length
+  const avgRisk  = latestReports.length
     ? Math.round(latestReports.reduce((s, r) => s + r.risk_score, 0) / latestReports.length)
     : 0;
   const highRisk = latestReports.filter((r) => r.risk_score > 60).length;
@@ -165,7 +160,7 @@ if (sortCol) {
         <Card className="shadow-none dark:ring-0">
           <CardHeader><CardTitle className="text-xs font-medium text-muted-foreground uppercase tracking-wide">{t.dash.domains}</CardTitle></CardHeader>
           <CardContent className="flex items-end justify-between">
-            <p className="text-2xl font-bold tabular-nums">{reports.length}</p>
+            <p className="text-2xl font-bold tabular-nums">{latestReports.length}</p>
             <Globe className="size-4 text-muted-foreground" />
           </CardContent>
         </Card>
@@ -205,56 +200,53 @@ if (sortCol) {
             <div className="flex items-center gap-2">
               <UploadButton />
 
-              {/* Filter dropdown */}
-              <div className="relative" ref={filterRef}>
-                <Button
-                  size="sm"
-                  variant="outline"
-                  className={cn("h-8 gap-1.5", activeFilterCount > 0 && "border-primary text-primary")}
-                  onClick={() => setFilterOpen((o) => !o)}
-                >
-                  <SlidersHorizontal className="size-3.5" />
-                  <span className="hidden sm:inline">{t.dash.filter}</span>
-                  {activeFilterCount > 0 && (
-                    <span className="flex size-4 items-center justify-center rounded-full bg-primary text-[10px] font-bold text-primary-foreground">
-                      {activeFilterCount}
-                    </span>
-                  )}
-                </Button>
-
-                {filterOpen && (
-                  <div className="absolute right-0 top-9 z-50 w-56 rounded-lg border bg-popover p-3 shadow-lg text-popover-foreground">
-                    <p className="mb-2 text-[10px] font-semibold uppercase tracking-wider text-muted-foreground">
-                      Risk Score
-                    </p>
-                    <div className="flex flex-col gap-1">
-                      {RISK_LEVEL_KEYS.map(({ key }) => (
-                        <label key={key} className="flex cursor-pointer items-center gap-2 rounded px-1 py-0.5 text-sm hover:bg-muted/50">
-                          <input
-                            type="checkbox"
-                            checked={riskFilters.includes(key)}
-                            onChange={() => toggleRisk(key)}
-                            className="accent-primary"
-                          />
-                          {t.risk[key]}
-                        </label>
-                      ))}
-                    </div>
-
+              {/* Risk filter */}
+              <Popover open={filterOpen} onOpenChange={setFilterOpen}>
+                <PopoverTrigger asChild>
+                  <Button
+                    size="sm"
+                    variant="outline"
+                    className={cn("h-8 gap-1.5", activeFilterCount > 0 && "border-primary text-primary")}
+                  >
+                    <SlidersHorizontal className="size-3.5" />
+                    <span className="hidden sm:inline">{t.dash.filter}</span>
                     {activeFilterCount > 0 && (
-                      <>
-                        <div className="my-2.5 border-t" />
-                        <button
-                          className="w-full rounded px-2 py-1 text-xs text-destructive hover:bg-destructive/10"
-                          onClick={() => { update({ risk: null, p: "1" }); setFilterOpen(false); }}
-                        >
-                          {t.dash.removeFilters}
-                        </button>
-                      </>
+                      <span className="flex size-4 items-center justify-center rounded-full bg-primary text-[10px] font-bold text-primary-foreground">
+                        {activeFilterCount}
+                      </span>
                     )}
+                  </Button>
+                </PopoverTrigger>
+                <PopoverContent className="w-56 p-3" align="end">
+                  <p className="mb-2 text-[10px] font-semibold uppercase tracking-wider text-muted-foreground">
+                    Risk Score
+                  </p>
+                  <div className="flex flex-col gap-1">
+                    {RISK_LEVEL_KEYS.map(({ key }) => (
+                      <label key={key} className="flex cursor-pointer items-center gap-2 rounded px-1 py-0.5 text-sm hover:bg-muted/50">
+                        <input
+                          type="checkbox"
+                          checked={riskFilters.includes(key)}
+                          onChange={() => toggleRisk(key)}
+                          className="accent-primary"
+                        />
+                        {t.risk[key]}
+                      </label>
+                    ))}
                   </div>
-                )}
-              </div>
+                  {activeFilterCount > 0 && (
+                    <>
+                      <div className="my-2.5 border-t" />
+                      <button
+                        className="w-full rounded px-2 py-1 text-xs text-destructive hover:bg-destructive/10"
+                        onClick={() => { update({ risk: null, p: "1" }); setFilterOpen(false); }}
+                      >
+                        {t.dash.removeFilters}
+                      </button>
+                    </>
+                  )}
+                </PopoverContent>
+              </Popover>
 
               {/* Date picker */}
               <Popover>
@@ -323,37 +315,37 @@ if (sortCol) {
               <TableRow>
                 <TableHead className="pl-6">
                   <button onClick={() => handleSort("domain")} className="flex items-center gap-1 hover:text-foreground transition-colors">
-                    {t.dash.colDomain} <SortIcon col="domain" />
+                    {t.dash.colDomain} <SortIcon col="domain" sortCol={sortCol} sortDir={sortDir} />
                   </button>
                 </TableHead>
                 <TableHead>
                   <button onClick={() => handleSort("risk")} className="flex items-center gap-1 hover:text-foreground transition-colors">
-                    {t.dash.colRisk} <SortIcon col="risk" />
+                    {t.dash.colRisk} <SortIcon col="risk" sortCol={sortCol} sortDir={sortDir} />
                   </button>
                 </TableHead>
                 <TableHead className="hidden sm:table-cell">
                   <button onClick={() => handleSort("asset")} className="flex items-center gap-1 hover:text-foreground transition-colors">
-                    {t.dash.colAsset} <SortIcon col="asset" />
+                    {t.dash.colAsset} <SortIcon col="asset" sortCol={sortCol} sortDir={sortDir} />
                   </button>
                 </TableHead>
                 <TableHead className="hidden md:table-cell">
                   <button onClick={() => handleSort("vulns")} className="flex items-center gap-1 hover:text-foreground transition-colors">
-                    {t.dash.colVulns} <SortIcon col="vulns" />
+                    {t.dash.colVulns} <SortIcon col="vulns" sortCol={sortCol} sortDir={sortDir} />
                   </button>
                 </TableHead>
                 <TableHead className="hidden md:table-cell">
                   <button onClick={() => handleSort("leak")} className="flex items-center gap-1 hover:text-foreground transition-colors">
-                    {t.dash.colLeak} <SortIcon col="leak" />
+                    {t.dash.colLeak} <SortIcon col="leak" sortCol={sortCol} sortDir={sortDir} />
                   </button>
                 </TableHead>
                 <TableHead className="hidden lg:table-cell">
                   <button onClick={() => handleSort("waf")} className="flex items-center gap-1 hover:text-foreground transition-colors">
-                    {t.dash.colWaf} <SortIcon col="waf" />
+                    {t.dash.colWaf} <SortIcon col="waf" sortCol={sortCol} sortDir={sortDir} />
                   </button>
                 </TableHead>
                 <TableHead className="hidden lg:table-cell">
                   <button onClick={() => handleSort("date")} className="flex items-center gap-1 hover:text-foreground transition-colors">
-                    {t.dash.colDate} <SortIcon col="date" />
+                    {t.dash.colDate} <SortIcon col="date" sortCol={sortCol} sortDir={sortDir} />
                   </button>
                 </TableHead>
                 <TableHead className="pr-6 text-right w-12"></TableHead>
@@ -420,13 +412,15 @@ if (sortCol) {
                             {report.risk_score}
                           </span>
                           <span className={cn("rounded-full px-2 py-0.5 text-xs font-semibold hidden sm:inline", risk.badgeClass)}>
-                            {risk.label}
+                            {t.risk[risk.level]}
                           </span>
                         </div>
                       </TableCell>
                       <TableCell className="hidden sm:table-cell tabular-nums">{report.n_asset}</TableCell>
                       <TableCell className="hidden md:table-cell tabular-nums">{totalVulns}</TableCell>
-                      <TableCell className="hidden md:table-cell tabular-nums">{totalLeaks.toLocaleString("it-IT")}</TableCell>
+                      <TableCell className="hidden md:table-cell tabular-nums">
+                        {totalLeaks.toLocaleString(lang === "it" ? "it-IT" : "en-US")}
+                      </TableCell>
                       <TableCell className="hidden lg:table-cell">
                         {report.waf.count > 0 ? (
                           <span className="text-xs font-medium">{report.waf.count} asset</span>
