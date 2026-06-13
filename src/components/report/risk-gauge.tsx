@@ -1,6 +1,7 @@
 import { cn } from "@/lib/utils";
 import { getRiskInfo } from "@/lib/risk-utils";
 import { Card, CardContent, CardHeader, CardTitle, CardDescription } from "@/components/ui/card";
+import { useT } from "@/hooks/use-t";
 
 interface RiskGaugeProps {
   score: number;
@@ -14,6 +15,7 @@ function polar(cx: number, cy: number, r: number, deg: number) {
 }
 
 export function RiskGauge({ score, domainName, className }: RiskGaugeProps) {
+  const t = useT();
   const cx = 120, cy = 120, r = 95, strokeW = 14;
   const clamped = Math.max(0, Math.min(100, score));
   const risk = getRiskInfo(clamped);
@@ -44,7 +46,7 @@ export function RiskGauge({ score, domainName, className }: RiskGaugeProps) {
     <Card className={cn("shadow-none dark:ring-0", className)}>
       <CardHeader className="text-center">
         <CardTitle className="text-sm break-all">{domainName}</CardTitle>
-        <CardDescription>Punteggio di rischio globale</CardDescription>
+        <CardDescription>{t.report.gaugeSubtitle}</CardDescription>
       </CardHeader>
       <CardContent className="flex flex-col items-center gap-2">
         <svg viewBox="10 10 220 138" className="w-full max-w-48">
