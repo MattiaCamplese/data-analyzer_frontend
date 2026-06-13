@@ -297,7 +297,7 @@ if (sortCol) {
                         className="mt-2 w-full rounded px-2 py-1 text-xs text-destructive hover:bg-destructive/10"
                         onClick={() => clearDateFilter()}
                       >
-                        Rimuovi filtro data
+                        {t.dash.dateFilterClear}
                       </button>
                     </div>
                   )}
@@ -369,8 +369,8 @@ if (sortCol) {
                         <div className="absolute inset-0 rounded-full border-4 border-primary border-t-transparent animate-spin" />
                       </div>
                       <div className="flex flex-col items-center gap-1">
-                        <span className="text-sm font-medium">Caricamento domini</span>
-                        <span className="text-xs text-muted-foreground">Ricerca record per la data selezionata…</span>
+                        <span className="text-sm font-medium">{t.dash.dateLoading}</span>
+                        <span className="text-xs text-muted-foreground">{t.dash.dateLoadingSub}</span>
                       </div>
                     </div>
                   </TableCell>
