@@ -184,7 +184,7 @@ export default function ReportPage() {
       <div ref={printRef} className="flex flex-col gap-6">
 
         {/* Gauge + Summary */}
-        <div className="grid gap-4 md:grid-cols-[220px_1fr]">
+        <div className="grid gap-4 md:grid-cols-[320px_1fr]">
           <RiskGauge score={report.risk_score} domainName={report.domain_name} />
           <Card className="shadow-none dark:ring-0">
             <CardHeader>

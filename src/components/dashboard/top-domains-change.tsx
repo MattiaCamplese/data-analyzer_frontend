@@ -118,11 +118,12 @@ export function TopDomainsChange() {
 
           {/* Peggiorati */}
           <div className="px-3 pt-2 pb-3">
-            <div className="flex items-center gap-2 px-3 pt-1 pb-3">
-              <TrendingUp className="size-3.5 text-destructive" />
-              <span className="text-sm font-semibold text-foreground">
-                {t.dash.topWorsened}
-              </span>
+            <div className="flex flex-col px-3 pt-1 pb-3 gap-0.5">
+              <div className="flex items-center gap-2">
+                <TrendingUp className="size-3.5 text-destructive" />
+                <span className="text-sm font-semibold text-foreground">{t.dash.topWorsened}</span>
+              </div>
+              <span className="text-[11px] text-muted-foreground pl-5">{t.dash.topClickHint}</span>
             </div>
             {worsened.length === 0 ? (
               <EmptyState message={noData ? t.dash.topNoChange : t.dash.topNeedScans} />
@@ -136,11 +137,12 @@ export function TopDomainsChange() {
 
           {/* Migliorati */}
           <div className="px-3 pt-2 pb-3">
-            <div className="flex items-center gap-2 px-3 pt-1 pb-3">
-              <TrendingDown className="size-3.5 text-green-500" />
-              <span className="text-sm font-semibold text-foreground">
-                {t.dash.topImproved}
-              </span>
+            <div className="flex flex-col px-3 pt-1 pb-3 gap-0.5">
+              <div className="flex items-center gap-2">
+                <TrendingDown className="size-3.5 text-green-500" />
+                <span className="text-sm font-semibold text-foreground">{t.dash.topImproved}</span>
+              </div>
+              <span className="text-[11px] text-muted-foreground pl-5">{t.dash.topClickHint}</span>
             </div>
             {improved.length === 0 ? (
               <EmptyState message={noData ? t.dash.topNoChange : t.dash.topNeedScans} />

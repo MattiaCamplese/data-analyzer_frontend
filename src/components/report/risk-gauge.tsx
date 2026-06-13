@@ -49,7 +49,7 @@ export function RiskGauge({ score, domainName, className }: RiskGaugeProps) {
         <CardDescription>{t.report.gaugeSubtitle}</CardDescription>
       </CardHeader>
       <CardContent className="flex flex-col items-center gap-2">
-        <svg viewBox="10 10 220 138" className="w-full max-w-48">
+        <svg viewBox="10 10 220 138" className="w-full max-w-64">
           <path d={trackPath} fill="none" stroke="currentColor" strokeOpacity="0.1" strokeWidth={strokeW} strokeLinecap="round" />
           {valuePath && (
             <path d={valuePath} fill="none" stroke={risk.hex} strokeWidth={strokeW} strokeLinecap="round" />
