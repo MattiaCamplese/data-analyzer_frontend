@@ -117,10 +117,10 @@ export function TopDomainsChange() {
         <div className="grid grid-cols-1 sm:grid-cols-2 divide-y sm:divide-y-0 sm:divide-x">
 
           {/* Peggiorati */}
-          <div className="p-2">
-            <div className="flex items-center gap-2 px-3 py-2">
+          <div className="px-3 pt-2 pb-3">
+            <div className="flex items-center gap-2 px-3 pt-1 pb-3">
               <TrendingUp className="size-3.5 text-destructive" />
-              <span className="text-xs font-medium uppercase tracking-wide text-muted-foreground">
+              <span className="text-sm font-semibold text-foreground">
                 {t.dash.topWorsened}
               </span>
             </div>
@@ -135,10 +135,10 @@ export function TopDomainsChange() {
           </div>
 
           {/* Migliorati */}
-          <div className="p-2">
-            <div className="flex items-center gap-2 px-3 py-2">
+          <div className="px-3 pt-2 pb-3">
+            <div className="flex items-center gap-2 px-3 pt-1 pb-3">
               <TrendingDown className="size-3.5 text-green-500" />
-              <span className="text-xs font-medium uppercase tracking-wide text-muted-foreground">
+              <span className="text-sm font-semibold text-foreground">
                 {t.dash.topImproved}
               </span>
             </div>
