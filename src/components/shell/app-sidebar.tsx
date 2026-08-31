@@ -4,14 +4,13 @@ import { useNavigate } from "react-router-dom";
 import { Sidebar, SidebarContent, SidebarFooter, SidebarHeader, SidebarMenu, SidebarMenuButton, SidebarMenuItem } from "@/components/ui/sidebar";
 import { NavGroup } from "@/components/shell/nav-group";
 import { footerNavLinks, navGroups } from "@/components/shell/app-shared";
-import { useAuthStore } from "@/features/auth/auth.store";
+import { AuthService } from "@/features/auth/auth.service";
 
 export function AppSidebar() {
-  const logout = useAuthStore((s) => s.logout);
   const navigate = useNavigate();
 
-  function handleLogout() {
-    logout();
+  async function handleLogout() {
+    await AuthService.logout();
     navigate("/login", { replace: true });
   }
 

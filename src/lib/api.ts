@@ -1,14 +1,8 @@
 import type { SecurityReport } from "@/types/report"
 import { mockReports } from "./mock-data"
-import { useAuthStore } from "@/features/auth/auth.store"
+import { authFetch, BASE_URL } from "./http"
 
-const BASE_URL = (import.meta.env.VITE_API_BASE_URL as string | undefined) ?? ""
 export const isMock = !BASE_URL
-
-function authHeader(): HeadersInit {
-  const token = useAuthStore.getState().token
-  return token ? { Authorization: `Bearer ${token}` } : {}
-}
 
 // ── Lista report ───────────────────────────────────────────
 export async function fetchReports(params?: {
@@ -65,7 +59,7 @@ export async function fetchReports(params?: {
   if (params?.page)     url.searchParams.set("page",    String(params.page))
   if (params?.perPage)  url.searchParams.set("perPage", String(params.perPage))
 
-  const res = await fetch(url.toString(), { headers: authHeader() })
+  const res = await authFetch(url.toString())
   if (!res.ok) throw new Error(`HTTP ${res.status}`)
   return res.json()
 }
@@ -77,10 +71,7 @@ export async function fetchReportHistory(domain: string): Promise<{ items: Secur
       .sort((a, b) => b.creation_date.localeCompare(a.creation_date))
     return { items, total: items.length }
   }
-  const res = await fetch(
-    `${BASE_URL}/api/summaries/history/${encodeURIComponent(domain)}`,
-    { headers: authHeader() },
-  )
+  const res = await authFetch(`/api/summaries/history/${encodeURIComponent(domain)}`)
   if (!res.ok) throw new Error(`HTTP ${res.status}`)
   return res.json()
 }
@@ -93,7 +84,7 @@ export async function fetchReport(id: string): Promise<SecurityReport> {
     return report
   }
 
-  const res = await fetch(`${BASE_URL}/api/summaries/${id}`, { headers: authHeader() })
+  const res = await authFetch(`/api/summaries/${id}`)
   if (!res.ok) throw new Error(`HTTP ${res.status}`)
   return res.json()
 }
@@ -103,9 +94,9 @@ export async function uploadReports(data: unknown): Promise<{ inserted: number }
   if (isMock) {
     return { inserted: Array.isArray(data) ? (data as unknown[]).length : 1 }
   }
-  const res = await fetch(`${BASE_URL}/api/summaries`, {
+  const res = await authFetch(`/api/summaries`, {
     method: "POST",
-    headers: { "Content-Type": "application/json", ...authHeader() },
+    headers: { "Content-Type": "application/json" },
     body: JSON.stringify(data),
   })
   if (!res.ok) {
@@ -118,10 +109,7 @@ export async function uploadReports(data: unknown): Promise<{ inserted: number }
 // ── Elimina report ─────────────────────────────────────────
 export async function deleteReport(id: string): Promise<void> {
   if (isMock) return
-  const res = await fetch(`${BASE_URL}/api/summaries/${id}`, {
-    method: "DELETE",
-    headers: authHeader(),
-  })
+  const res = await authFetch(`/api/summaries/${id}`, { method: "DELETE" })
   if (!res.ok) {
     const body = await res.json().catch(() => null)
     throw new Error(body?.message ?? `HTTP ${res.status}`)
@@ -131,9 +119,6 @@ export async function deleteReport(id: string): Promise<void> {
 // ── Seed (utility) ─────────────────────────────────────────
 export async function seedDatabase(): Promise<void> {
   if (isMock) return
-  const res = await fetch(`${BASE_URL}/api/summaries/seed`, {
-    method: "POST",
-    headers: authHeader(),
-  })
+  const res = await authFetch(`/api/summaries/seed`, { method: "POST" })
   if (!res.ok) throw new Error(`Seed failed: HTTP ${res.status}`)
 }

@@ -1,9 +1,8 @@
 import type { User } from "@/types/user"
 import { useAuthStore } from "./auth.store"
+import { authFetch, BASE_URL } from "@/lib/http"
 
-const BASE_URL = (import.meta.env.VITE_API_BASE_URL as string | undefined) ?? ""
-
-async function authFetch<T>(path: string, options: RequestInit = {}): Promise<T> {
+async function publicFetch<T>(path: string, options: RequestInit = {}): Promise<T> {
   const res = await fetch(`${BASE_URL}${path}`, {
     ...options,
     headers: { "Content-Type": "application/json", ...options.headers },
@@ -15,17 +14,32 @@ async function authFetch<T>(path: string, options: RequestInit = {}): Promise<T>
 
 export const AuthService = {
   async login(email: string, password: string): Promise<void> {
-    const { token, user } = await authFetch<{ token: string; user: User }>("/api/auth/login", {
+    const { accessToken, refreshToken, user } = await publicFetch<{
+      accessToken: string
+      refreshToken: string
+      user: User
+    }>("/api/auth/login", {
       method: "POST",
       body: JSON.stringify({ email, password }),
     })
-    useAuthStore.getState().login(user, token)
+    useAuthStore.getState().login(user, accessToken, refreshToken)
   },
 
   async me(): Promise<User> {
-    const token = useAuthStore.getState().token
-    return authFetch<User>("/api/auth/me", {
-      headers: { Authorization: `Bearer ${token}` },
-    })
+    const res = await authFetch("/api/auth/me")
+    if (!res.ok) throw new Error(`HTTP ${res.status}`)
+    return res.json()
+  },
+
+  async logout(): Promise<void> {
+    const { refreshToken } = useAuthStore.getState()
+    if (refreshToken) {
+      await fetch(`${BASE_URL}/api/auth/logout`, {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ refreshToken }),
+      }).catch(() => {})
+    }
+    useAuthStore.getState().logout()
   },
 }

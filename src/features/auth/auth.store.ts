@@ -4,8 +4,10 @@ import type { User } from "@/types/user"
 
 type AuthStore = {
   user: User | undefined
-  token: string
-  login: (user: User, token: string) => void
+  accessToken: string
+  refreshToken: string
+  login: (user: User, accessToken: string, refreshToken: string) => void
+  setTokens: (accessToken: string, refreshToken: string) => void
   logout: () => void
 }
 
@@ -13,12 +15,16 @@ export const useAuthStore = create<AuthStore>()(
   persist(
     (set) => ({
       user: undefined,
-      token: "",
-      login(user, token) {
-        set({ user, token })
+      accessToken: "",
+      refreshToken: "",
+      login(user, accessToken, refreshToken) {
+        set({ user, accessToken, refreshToken })
+      },
+      setTokens(accessToken, refreshToken) {
+        set({ accessToken, refreshToken })
       },
       logout() {
-        set({ user: undefined, token: "" })
+        set({ user: undefined, accessToken: "", refreshToken: "" })
       },
     }),
     {

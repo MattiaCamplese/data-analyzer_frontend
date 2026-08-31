@@ -3,7 +3,7 @@ import { useNavigate, useLocation } from "react-router-dom";
 import { useRef, useState, useEffect } from "react";
 import { RiShieldCheckLine, RiDashboardLine } from "@remixicon/react";
 import { Separator } from "@/components/ui/separator";
-import { useAuthStore } from "@/features/auth/auth.store";
+import { AuthService } from "@/features/auth/auth.service";
 import { useNotificationsStore } from "@/features/notifications/notifications.store";
 import { useTheme } from "@/components/theme-provider";
 import { AppBreadcrumbs } from "@/components/shell/app-breadcrumbs";
@@ -30,7 +30,6 @@ function timeAgo(iso: string, t: { timeNow: string; timeMin: string; timeHour: s
 export function AppHeader() {
   const t = useT();
   const page = useBreadcrumb();
-  const logout = useAuthStore((s) => s.logout);
   const navigate = useNavigate();
   const notifications = useNotificationsStore((s) => s.notifications);
   const markAllRead = useNotificationsStore((s) => s.markAllRead);
@@ -65,8 +64,8 @@ export function AppHeader() {
     setOpen(false);
   }
 
-  function handleLogout() {
-    logout();
+  async function handleLogout() {
+    await AuthService.logout();
     navigate("/login", { replace: true });
   }
 
